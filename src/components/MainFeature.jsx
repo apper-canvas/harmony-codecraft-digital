@@ -5,35 +5,55 @@ import { Editor } from '@monaco-editor/react'
 import ApperIcon from './ApperIcon'
 
 function MainFeature() {
+const [activeTab, setActiveTab] = useState('input')
+  const [inputTab, setInputTab] = useState('request')
   const [inputText, setInputText] = useState('')
-  const [activeTab, setActiveTab] = useState('changes')
+  const [processedFiles, setProcessedFiles] = useState('')
+  const [text, setText] = useState('')
+  const [processedText, setProcessedText] = useState('')
   const [changesTab, setChangesTab] = useState('input')
-  const [processedCode, setProcessedCode] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
-const [editorSettings, setEditorSettings] = useState({
-    showLineNumbers: true,
-    theme: 'light',
-    fontSize: 14,
-    enableFolding: true
-  })
-const [processingStats, setProcessingStats] = useState({
-    lineCount: 0,
-    processingTime: 0,
-codeType: 'html'
-  })
-  const [collapsedBlocks, setCollapsedBlocks] = useState(new Set())
-const codeEditorRef = useRef(null)
-  // Helper function to detect language from content
-  const getLanguageFromContent = (content) => {
-    if (content.includes('<html') || content.includes('<div') || content.includes('<span')) {
-      return 'html'
+  const [stats, setStats] = useState({ lines: 0, words: 0, characters: 0 })
+const handleInputProcess = async () => {
+    setIsProcessing(true)
+    
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    if (inputText.trim()) {
+      setProcessedFiles(inputText)
+      setInputTab('files') // Switch to Actual Files tab automatically
+      
+      toast.success('Request processed successfully!')
+    } else {
+      toast.warning('Please enter some request text to process')
     }
-    if (content.includes('function') || content.includes('const') || content.includes('let') || content.includes('=>')) {
-      return 'javascript'
+    
+    setIsProcessing(false)
+  }
+
+  const handleProcess = async () => {
+    setIsProcessing(true)
+    
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    if (text.trim()) {
+      setProcessedText(text)
+      setChangesTab('output') // Switch to Code Output tab automatically
+      
+      // Calculate stats
+      const lines = text.split('\n').length
+      const words = text.trim().split(/\s+/).filter(word => word.length > 0).length
+      const characters = text.length
+      setStats({ lines, words, characters })
+      
+      toast.success('Text processed successfully!')
+    } else {
+      toast.warning('Please enter some text to process')
     }
-    if (content.includes('import React') || content.includes('jsx') || content.includes('<')) {
-      return 'javascript'
-    }
+    
+    setIsProcessing(false)
     return 'plaintext'
   }
 
@@ -53,20 +73,17 @@ const codeEditorRef = useRef(null)
                      window.matchMedia('(prefers-color-scheme: dark)').matches
 
   // Extract text values from input using the provided function
+// Extract text values from input using the provided function
   function extractAllTextValues(input) {
     const lines = input.split('\n');
     let extractedTexts = [];
 
     lines.forEach(line => {
-        if (line.trim().startsWith("data: ")) {
-            const jsonStr = line.trim().slice(6); // Remove "data: " prefix
+        if (line.trim()) {
             try {
-                const obj = JSON.parse(jsonStr);
-                const content = obj?.choices?.[0]?.delta?.content;
-
-                // Include all string content, even empty or newline
-                if (typeof content === "string") {
-                    extractedTexts.push(content);
+                const parsed = JSON.parse(line);
+                if (parsed && parsed.content) {
+                    extractedTexts.push(parsed.content);
                 }
             } catch (e) {
                 console.warn("Skipping malformed JSON line:", line);
@@ -75,9 +92,22 @@ const codeEditorRef = useRef(null)
     });
 
     return extractedTexts.join('');
+return extractedTexts.join('');
   }
 
-  const handleProcess = async () => {
+  // Additional state variables needed
+  const [processedCode, setProcessedCode] = useState('')
+  const [processingStats, setProcessingStats] = useState({ lineCount: 0, processingTime: 0, codeType: 'html' })
+  const [editorSettings, setEditorSettings] = useState({ 
+    showLineNumbers: true, 
+    enableFolding: true, 
+    fontSize: 14, 
+    showErrors: true 
+  })
+  const [collapsedBlocks, setCollapsedBlocks] = useState(new Set())
+  const codeEditorRef = useRef(null)
+
+  const handleProcessInput = async () => {
     if (!inputText.trim()) {
       toast.error('Please enter some text to transform')
       return
@@ -85,21 +115,197 @@ const codeEditorRef = useRef(null)
 
     setIsProcessing(true)
     
-    // Simulate processing delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 800))
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
     
-    const startTime = Date.now()
     const extractedText = extractAllTextValues(inputText)
-    const processingTime = Date.now() - startTime
-    
-    // Handle case where no valid text is found
-    const finalOutput = extractedText || "No valid text found"
-    
-setProcessedCode(finalOutput)
+    setProcessedCode(extractedText || inputText)
     setProcessingStats({
-      lineCount: finalOutput.split('\n').length,
-      processingTime: processingTime,
-      codeType: 'text'
+      lineCount: (extractedText || inputText).split('\n').length,
+      processingTime: 1500,
+      codeType: getLanguageFromContent(extractedText || inputText)
+    })
+    
+    setIsProcessing(false)
+    setChangesTab('output')
+    
+    if (extractedText) {
+      toast.success('Successfully extracted text content!')
+    } else {
+      toast.warning('No valid text patterns found in input')
+    }
+  }
+
+  // Get language from content
+  const getLanguageFromContent = (content) => {
+    if (content.includes('<html') || content.includes('<!DOCTYPE')) return 'html'
+    if (content.includes('function') || content.includes('const ') || content.includes('let ')) return 'javascript'
+    if (content.includes('def ') || content.includes('import ')) return 'python'
+    if (content.includes('{') && content.includes(':')) return 'json'
+        {activeTab === 'input' ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8"
+          >
+            {/* Input Section Tabs */}
+            <div className="flex space-x-2 mb-6 p-1 bg-white bg-opacity-10 rounded-xl backdrop-blur-sm">
+              <button
+                onClick={() => setInputTab('request')}
+                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                  inputTab === 'request' 
+                    ? 'bg-primary-500 text-white shadow-lg' 
+                    : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
+                }`}
+              >
+                Request
+              </button>
+              <button
+                onClick={() => setInputTab('files')}
+                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                  inputTab === 'files' 
+                    ? 'bg-primary-500 text-white shadow-lg' 
+                    : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
+                }`}
+              >
+                Actual Files
+              </button>
+            </div>
+
+            {/* Input Tab Content */}
+            {inputTab === 'request' ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-8 glass-panel rounded-2xl"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-surface-800">
+                    Request Input
+                  </h3>
+                  <div className="flex items-center space-x-2 text-sm text-surface-600">
+                    <ApperIcon name="Type" className="w-4 h-4" />
+                    <span>Enter your request</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 mb-3">
+                      Request Text
+                    </label>
+                    <div className="relative">
+                      <textarea
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        placeholder="Enter your request text here..."
+                        className="w-full h-64 p-6 bg-white bg-opacity-50 border border-surface-300 rounded-xl resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-surface-800 placeholder-surface-500 backdrop-blur-sm"
+                        style={{ fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace' }}
+                      />
+                      <div className="absolute bottom-4 right-4 text-xs text-surface-500">
+                        {inputText.length} characters
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleInputProcess}
+                    disabled={isProcessing}
+                    className="w-full py-4 px-6 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                          <ApperIcon name="Loader2" className="w-5 h-5" />
+                        </motion.div>
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ApperIcon name="Play" className="w-5 h-5" />
+                        <span>Process Request</span>
+                      </>
+                    )}
+                  </motion.button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-8 glass-panel rounded-2xl"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-surface-800">
+                    Actual Files
+                  </h3>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2 text-sm text-surface-600">
+                      <ApperIcon name="FileText" className="w-4 h-4" />
+                      <span>Processed files</span>
+                    </div>
+                    {processedFiles && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => navigator.clipboard.writeText(processedFiles)}
+                        className="p-2 bg-surface-100 hover:bg-surface-200 rounded-lg transition-colors"
+                        title="Copy to clipboard"
+                      >
+                        <ApperIcon name="Copy" className="w-4 h-4 text-surface-600" />
+                      </motion.button>
+                    )}
+                  </div>
+                </div>
+                
+                {processedFiles ? (
+                  <div className="bg-surface-50 rounded-xl overflow-hidden border border-surface-200">
+                    <div className="bg-surface-100 px-4 py-2 border-b border-surface-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-surface-700">output.txt</span>
+                        <div className="flex items-center space-x-2 text-xs text-surface-500">
+                          <span>Text</span>
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="relative">
+<Editor
+                        height="400px"
+                        language="plaintext"
+                        value={processedFiles}
+                        theme="vs-light"
+                        options={{
+                          readOnly: true,
+                          minimap: { enabled: false },
+                          scrollBeyondLastLine: false,
+                          fontSize: 14,
+                          lineHeight: 20,
+                          fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace',
+                          wordWrap: 'on',
+                          lineNumbers: 'on',
+                          folding: true,
+                          automaticLayout: true
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-surface-50 rounded-xl border-2 border-dashed border-surface-300 p-12 text-center">
+                    <ApperIcon name="FileText" className="w-12 h-12 text-surface-400 mx-auto mb-4" />
+                    <h4 className="text-lg font-medium text-surface-600 mb-2">No files processed yet</h4>
+                    <p className="text-surface-500">Process a request to see the generated files here.</p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </motion.div>
+        ) : (
     })
     
     setIsProcessing(false)
@@ -264,7 +470,7 @@ return (
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={handleProcess}
+onClick={handleProcessInput}
             disabled={isProcessing || !inputText.trim()}
             className="neu-button w-full sm:w-auto bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition-all duration-300"
           >
@@ -451,7 +657,7 @@ options={{
               </div>
             </div>
 )}
-</div>
+        </div>
               </div>
             </>
           )}
