@@ -4,50 +4,88 @@ import ApperIcon from '../ApperIcon'
 import EditInputTab from './nested/EditInputTab'
 import EditChangesTab from './nested/EditChangesTab'
 
-const EditTab = () => {
-  // Sub-tab state for Edit tab
-  const [editSubTab, setEditSubTab] = useState('input')
+const EditTab = ({ 
+  inputText, 
+  setInputText, 
+  parsedData, 
+  setParsedData, 
+  codebaseFiles, 
+  setCodebaseFiles, 
+  activeFileTab, 
+  setActiveFileTab,
+  changesText,
+  setChangesText,
+  processedCode,
+  setProcessedCode
+}) => {
+  const [editTab, setEditTab] = useState(() => {
+    return localStorage.getItem('editActiveSubTab') || 'input'
+  })
+
+  const handleTabChange = (tab) => {
+    setEditTab(tab)
+    localStorage.setItem('editActiveSubTab', tab)
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-8"
+      className="space-y-6"
     >
-      {/* Sub-Tab Navigation for Edit */}
-      <div className="glass-panel p-2 mb-6">
+      {/* Edit Section Tabs */}
+      <div className="glass-panel p-2">
         <div className="flex space-x-2">
           <button
-            onClick={() => setEditSubTab('input')}
+            onClick={() => handleTabChange('input')}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-              editSubTab === 'input'
+              editTab === 'input'
                 ? 'bg-primary-500 text-white shadow-glow'
                 : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
             }`}
           >
             <div className="flex items-center space-x-2">
-              <ApperIcon name="FileText" className="w-4 h-4" />
+              <ApperIcon name="Upload" className="w-4 h-4" />
               <span>Input</span>
             </div>
           </button>
           <button
-            onClick={() => setEditSubTab('changes')}
+            onClick={() => handleTabChange('changes')}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-              editSubTab === 'changes'
+              editTab === 'changes'
                 ? 'bg-primary-500 text-white shadow-glow'
                 : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
             }`}
           >
             <div className="flex items-center space-x-2">
-              <ApperIcon name="Code2" className="w-4 h-4" />
+              <ApperIcon name="GitCommit" className="w-4 h-4" />
               <span>Changes</span>
             </div>
           </button>
         </div>
       </div>
 
-      {/* Input Sub-Tab Content */}
-      {editSubTab === 'input' && <EditInputTab />}
+      {/* Tab Content */}
+      {editTab === 'input' && (
+        <EditInputTab 
+          inputText={inputText}
+          setInputText={setInputText}
+          parsedData={parsedData}
+          setParsedData={setParsedData}
+          codebaseFiles={codebaseFiles}
+          setCodebaseFiles={setCodebaseFiles}
+          activeFileTab={activeFileTab}
+          setActiveFileTab={setActiveFileTab}
+        />
+      )}
+      {editTab === 'changes' && (
+        <EditChangesTab 
+          text={changesText}
+          setText={setChangesText}
+          processedCode={processedCode}
+          setProcessedCode={setProcessedCode}
+        />
+      )}
 
       {/* Changes Sub-Tab Content */}
       {editSubTab === 'changes' && <EditChangesTab />}
