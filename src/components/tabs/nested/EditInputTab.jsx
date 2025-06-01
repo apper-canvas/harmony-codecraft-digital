@@ -11,9 +11,12 @@ const EditInputTab = ({
   setParsedData, 
   codebaseFiles, 
   setCodebaseFiles, 
-setActiveFileTab,
+  activeFileTab,
+  setActiveFileTab,
   clearAll,
-  isActive
+  isActive,
+  inputTab,
+  setInputTab
 }) => {
 const [processedFiles, setProcessedFiles] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
