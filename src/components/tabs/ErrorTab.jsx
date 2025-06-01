@@ -76,11 +76,8 @@ const ErrorTab = ({
           setText={setChangesText}
           processedCode={processedCode}
           setProcessedCode={setProcessedCode}
-        />
+/>
       )}
-
-      {/* Changes Sub-Tab Content */}
-      {errorSubTab === 'changes' && <ErrorChangesTab />}
     </motion.div>
   )
 }
