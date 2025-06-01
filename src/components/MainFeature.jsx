@@ -18,160 +18,31 @@ function MainFeature() {
     codeType: 'html'
   })
   
-  const codeEditorRef = useRef(null)
+const codeEditorRef = useRef(null)
 
-  // Transform input text into formatted HTML/JS code
-  const transformToCode = (text) => {
-    const startTime = Date.now()
-    
-    // Basic transformation rules
-    const lines = text.split('\n').filter(line => line.trim())
-    
-    if (lines.length === 0) return { html: '', js: '', type: 'html' }
-    
-    // Detect if input looks like a list or structured data
-    const isList = lines.every(line => line.match(/^[-*•]\s/) || line.match(/^\d+\.\s/))
-    const isKeyValue = lines.some(line => line.includes(':'))
-    const hasJSKeywords = text.match(/\b(function|const|let|var|if|for|while|class)\b/)
-    
-    if (hasJSKeywords || text.includes('{') || text.includes('(')) {
-      // Transform to JavaScript
-      const jsCode = `// Generated JavaScript Code
-function processData() {
-${lines.map(line => `  // ${line.trim()}`).join('\n')}
-  
-  const data = {
-${lines.map((line, index) => {
-  const cleanLine = line.trim().replace(/[^a-zA-Z0-9\s]/g, '')
-  const key = cleanLine.split(' ')[0].toLowerCase() || `item${index + 1}`
-  const value = cleanLine.split(' ').slice(1).join(' ') || 'value'
-  return `    ${key}: "${value}"`
-}).join(',\n')}
-  };
-  
-  return data;
-}
+  // Extract text values from input using the provided function
+  function extractAllTextValues(input) {
+    const lines = input.split('\n');
+    let extractedTexts = [];
 
-// Execute the function
-const result = processData();
-console.log(result);`
-      
-      return { 
-        code: jsCode, 
-        type: 'javascript',
-        processingTime: Date.now() - startTime
-      }
-    } else if (isList) {
-      // Transform to HTML list
-      const listItems = lines.map(line => {
-        const cleanLine = line.replace(/^[-*•]\s/, '').replace(/^\d+\.\s/, '')
-        return `    <li>${cleanLine}</li>`
-      }).join('\n')
-      
-      const htmlCode = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generated Content</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        ul { list-style-type: disc; padding-left: 20px; }
-        li { margin: 5px 0; }
-    </style>
-</head>
-<body>
-    <h2>Generated List</h2>
-    <ul>
-${listItems}
-    </ul>
-</body>
-</html>`
-      
-      return { 
-        code: htmlCode, 
-        type: 'html',
-        processingTime: Date.now() - startTime
-      }
-    } else if (isKeyValue) {
-      // Transform to HTML table
-      const tableRows = lines.map(line => {
-        const [key, ...valueParts] = line.split(':')
-        const value = valueParts.join(':').trim()
-        return `        <tr>
-            <td><strong>${key.trim()}</strong></td>
-            <td>${value}</td>
-        </tr>`
-      }).join('\n')
-      
-      const htmlCode = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Table</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-    </style>
-</head>
-<body>
-    <h2>Generated Data Table</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Property</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-${tableRows}
-        </tbody>
-    </table>
-</body>
-</html>`
-      
-      return { 
-        code: htmlCode, 
-        type: 'html',
-        processingTime: Date.now() - startTime
-      }
-    } else {
-      // Transform to HTML paragraphs
-      const paragraphs = lines.map(line => `    <p>${line.trim()}</p>`).join('\n')
-      
-      const htmlCode = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generated Content</title>
-    <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            line-height: 1.6; 
-            margin: 40px; 
-            color: #333; 
+    lines.forEach(line => {
+        if (line.trim().startsWith("data: ")) {
+            const jsonStr = line.trim().slice(6); // Remove "data: " prefix
+            try {
+                const obj = JSON.parse(jsonStr);
+                const content = obj?.choices?.[0]?.delta?.content;
+
+                // Include all string content, even empty or newline
+                if (typeof content === "string") {
+                    extractedTexts.push(content);
+                }
+            } catch (e) {
+                console.warn("Skipping malformed JSON line:", line);
+            }
         }
-        p { margin: 15px 0; }
-        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-    </style>
-</head>
-<body>
-    <h1>Generated Content</h1>
-${paragraphs}
-</body>
-</html>`
-      
-      return { 
-        code: htmlCode, 
-        type: 'html',
-        processingTime: Date.now() - startTime
-      }
-    }
+    });
+
+    return extractedTexts.join('');
   }
 
   const handleProcess = async () => {
@@ -185,16 +56,27 @@ ${paragraphs}
     // Simulate processing delay for better UX
     await new Promise(resolve => setTimeout(resolve, 800))
     
-    const result = transformToCode(inputText)
-    setProcessedCode(result.code)
+    const startTime = Date.now()
+    const extractedText = extractAllTextValues(inputText)
+    const processingTime = Date.now() - startTime
+    
+    // Handle case where no valid text is found
+    const finalOutput = extractedText || "No valid text found"
+    
+    setProcessedCode(finalOutput)
     setProcessingStats({
-      lineCount: result.code.split('\n').length,
-      processingTime: result.processingTime,
-      codeType: result.type
+      lineCount: finalOutput.split('\n').length,
+      processingTime: processingTime,
+      codeType: 'text'
     })
     
     setIsProcessing(false)
-    toast.success(`Successfully transformed to ${result.type.toUpperCase()}!`)
+    
+    if (extractedText) {
+      toast.success('Successfully extracted text content!')
+    } else {
+      toast.warning('No valid text patterns found in input')
+    }
   }
 
   const handleCopyCode = () => {
