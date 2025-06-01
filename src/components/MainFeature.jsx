@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
+import { Editor } from '@monaco-editor/react'
 import ApperIcon from './ApperIcon'
 
 function MainFeature() {
@@ -20,8 +21,37 @@ const [processingStats, setProcessingStats] = useState({
   })
   const [isEditing, setIsEditing] = useState(false)
   const [collapsedBlocks, setCollapsedBlocks] = useState(new Set())
+const codeEditorRef = useRef(null)
   
-  const codeEditorRef = useRef(null)
+  // Helper function to detect language from content
+  const getLanguageFromContent = (content) => {
+    if (content.includes('<html') || content.includes('<div') || content.includes('<span')) {
+      return 'html'
+    }
+    if (content.includes('function') || content.includes('const') || content.includes('let') || content.includes('=>')) {
+      return 'javascript'
+    }
+    if (content.includes('import React') || content.includes('jsx') || content.includes('<')) {
+      return 'javascript'
+    }
+    return 'plaintext'
+  }
+
+  // Handle Monaco Editor mount
+  const handleEditorDidMount = (editor, monaco) => {
+    codeEditorRef.current = editor
+    // Configure additional editor options if needed
+    editor.updateOptions({
+      wordWrap: 'on',
+      automaticLayout: true
+    })
+  }
+
+  // Check if dark mode is enabled
+  const isDarkMode = document.documentElement.classList.contains('dark') || 
+                     document.body.classList.contains('dark') ||
+                     window.matchMedia('(prefers-color-scheme: dark)').matches
+
   // Extract text values from input using the provided function
   function extractAllTextValues(input) {
     const lines = input.split('\n');
