@@ -278,12 +278,11 @@ return (
                   </motion.div>
                   <span>Processing...</span>
                 </>
-              ) : (
+) : (
                 <>
                   <ApperIcon name="Play" className="w-5 h-5" />
                   <span>Transform to Code</span>
                 </>
-</>
               )}
             </div>
           </motion.button>
@@ -295,12 +294,13 @@ return (
             <>
               {/* Processing Stats */}
               <AnimatePresence>
-                {processedCode && (
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="glass-panel p-4 sm:p-6"
-          >
+{processedCode && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="glass-panel p-4 sm:p-6"
+                  >
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-primary-600">
