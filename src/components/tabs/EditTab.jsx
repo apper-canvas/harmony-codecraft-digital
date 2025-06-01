@@ -126,8 +126,8 @@ useEffect(() => {
           isActive={activeSubTab === 'input'}
           inputTab={editInputTab}
           setInputTab={setEditInputTab}
-          editorSettings={editorSettings}
-          setEditorSettings={setEditorSettings}
+editorSettings={inputEditorSettings}
+          setEditorSettings={setInputEditorSettings}
         />
       )}
 {activeSubTab === 'changes' && (
@@ -136,10 +136,12 @@ useEffect(() => {
           setText={setChangesText}
           changesTab={changesTab}
           setChangesTab={setChangesTab}
+          editorSettings={outputEditorSettings}
+          setEditorSettings={setOutputEditorSettings}
           options={{
-                fontSize: editorSettings.fontSize,
-                lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
-                folding: editorSettings.enableFolding,
+                fontSize: outputEditorSettings.fontSize,
+                lineNumbers: outputEditorSettings.showLineNumbers ? 'on' : 'off',
+                folding: outputEditorSettings.enableFolding,
                 minimap: { enabled: false },
                 scrollBeyondLastLine: false,
                 automaticLayout: true,

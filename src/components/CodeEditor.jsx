@@ -9,14 +9,10 @@ function CodeEditor({
   onCopy, 
   language, 
   isDarkMode,
-className = ""
+  className = "",
+editorSettings = { showLineNumbers: false, enableFolding: true, fontSize: 14, showErrors: false },
+  setEditorSettings
 }) {
-const [editorSettings, setEditorSettings] = useState({ 
-    showLineNumbers: false, 
-    enableFolding: true, 
-    fontSize: 14, 
-    showErrors: false 
-  })
 // Load settings from localStorage on component mount
   useEffect(() => {
     try {
