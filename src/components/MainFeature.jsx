@@ -1,13 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
-import { Editor } from '@monaco-editor/react'
 import ApperIcon from './ApperIcon'
 import CodeEditor from './CodeEditor'
-import TabNavigation from './TabNavigation'
 
-function MainFeature() {
-  const [activeTab, setActiveTab] = useState('edit')
+const MainFeature = ({ activeTab, setActiveTab }) => {
   
   // Sub-tab state for Edit and Error tabs
   const [editSubTab, setEditSubTab] = useState('input')
@@ -392,19 +389,12 @@ const handleCopyCode = () => {
       .replace(/(&lt;\/?)([a-zA-Z][a-zA-Z0-9]*)/g, '<span class="syntax-html">$1$2</span>')
       .replace(/\b(function|const|let|var|if|else|for|while|class|return|import|export)\b/g, '<span class="syntax-keyword">$1</span>')
       .replace(/"([^"]*)"/g, '<span class="syntax-string">"$1"</span>')
-      .replace(/\b(\d+)\b/g, '<span class="syntax-number">$1</span>')
-      .replace(/\/\/(.*?)$/gm, '<span class="syntax-comment">//$1</span>')
+.replace(/\/\/(.*?)$/gm, '<span class="syntax-comment">//$1</span>')
   }
 
-return (
-    <>
-      <div className="space-y-8">
-        {/* Tab Navigation */}
-        <TabNavigation 
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          saveScrollPosition={saveScrollPosition}
-        />
+  return (
+    <div className="space-y-6">
+      {/* Tab Content */}
 
 {/* Edit Tab Content */}
         {activeTab === 'edit' && (

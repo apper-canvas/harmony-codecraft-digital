@@ -5,6 +5,7 @@ import ApperIcon from '../components/ApperIcon'
 
 function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [activeTab, setActiveTab] = useState('Edit')
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode)
@@ -38,9 +39,37 @@ function Home() {
                   Transform text into code
                 </p>
               </div>
-            </motion.div>
+</motion.div>
 
             <div className="flex items-center space-x-4">
+              {/* Edit/Error Tabs */}
+              <div className="flex bg-surface-100/50 dark:bg-surface-800/50 rounded-xl p-1 backdrop-blur-sm">
+                <motion.button
+                  onClick={() => setActiveTab('Edit')}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                    activeTab === 'Edit'
+                      ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-soft'
+                      : 'text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400'
+                  }`}
+                >
+                  Edit
+                </motion.button>
+                <motion.button
+                  onClick={() => setActiveTab('Error')}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                    activeTab === 'Error'
+                      ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-soft'
+                      : 'text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400'
+                  }`}
+                >
+                  Error
+                </motion.button>
+              </div>
+
               <motion.button
                 onClick={toggleDarkMode}
                 whileHover={{ scale: 1.1 }}
@@ -57,8 +86,8 @@ function Home() {
         </div>
       </motion.header>
 {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <MainFeature />
+<main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <MainFeature activeTab={activeTab} setActiveTab={setActiveTab} />
       </main>
 
       {/* Footer */}
