@@ -324,7 +324,7 @@ const codeEditorRef = useRef(null)
                 onChange={(value) => handleCodeChange(value || '')}
                 onMount={handleEditorDidMount}
                 theme={isDarkMode ? 'vs-dark' : 'light'}
-                options={{
+options={{
                   fontSize: editorSettings.fontSize,
                   lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
                   folding: editorSettings.enableFolding,
@@ -351,7 +351,9 @@ const codeEditorRef = useRef(null)
                   guides: {
                     bracketPairs: true,
                     indentation: true
-                  }
+                  },
+                  validate: editorSettings.showErrors,
+                  renderValidationDecorations: editorSettings.showErrors ? 'on' : 'off'
                 }}
                 loading={
                   <div className="flex items-center justify-center h-96">
