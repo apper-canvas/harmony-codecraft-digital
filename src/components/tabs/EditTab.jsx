@@ -22,6 +22,7 @@ const EditTab = ({
 }) => {
 const editTab = activeSubTab
   const [editOutputTab, setEditOutputTab] = useState('input')
+  const [editInputTab, setEditInputTab] = useState('request')
   
   const handleTabChange = (tab) => {
     setActiveSubTab(tab)
@@ -73,7 +74,7 @@ const editTab = activeSubTab
         </div>
       </div>
 
-      {/* Tab Content */}
+{/* Tab Content */}
 {editTab === 'input' && (
 <EditInputTab 
           inputText={inputText}
@@ -86,6 +87,8 @@ const editTab = activeSubTab
           setActiveFileTab={setActiveFileTab}
           clearAll={clearAll}
           isActive={editTab === 'input'}
+          inputTab={editInputTab}
+          setInputTab={setEditInputTab}
         />
       )}
 {editTab === 'changes' && (
