@@ -55,13 +55,13 @@ function Home() {
                   }`}
                 >
                   Edit
-                </motion.button>
+</motion.button>
                 <motion.button
-                  onClick={() => setActiveTab('Error')}
+                  onClick={() => setActiveTab('error')}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                    activeTab === 'Error'
+                    activeTab === 'error'
                       ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-soft'
                       : 'text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400'
                   }`}
