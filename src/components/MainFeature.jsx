@@ -7,20 +7,41 @@ import CodeEditor from './CodeEditor'
 import TabNavigation from './TabNavigation'
 
 function MainFeature() {
-const [activeTab, setActiveTab] = useState('input')
+  const [activeTab, setActiveTab] = useState('edit')
+  
+  // Error tab state variables
   const [inputTab, setInputTab] = useState('request')
   const [inputText, setInputText] = useState('')
   const [processedFiles, setProcessedFiles] = useState('')
   const [parsedData, setParsedData] = useState(null)
   const [text, setText] = useState('')
   const [processedText, setProcessedText] = useState('')
-const [changesTab, setChangesTab] = useState('input')
+  const [changesTab, setChangesTab] = useState('input')
   const [isProcessing, setIsProcessing] = useState(false)
   const [stats, setStats] = useState({ lines: 0, words: 0, characters: 0 })
+  
+  // Edit tab state variables
+  const [editInputTab, setEditInputTab] = useState('request')
+  const [editInputText, setEditInputText] = useState('')
+  const [editProcessedFiles, setEditProcessedFiles] = useState('')
+  const [editParsedData, setEditParsedData] = useState(null)
+  const [editText, setEditText] = useState('')
+  const [editProcessedText, setEditProcessedText] = useState('')
+  const [editChangesTab, setEditChangesTab] = useState('input')
+  const [editIsProcessing, setEditIsProcessing] = useState(false)
+  const [editStats, setEditStats] = useState({ lines: 0, words: 0, characters: 0 })
+  
+  // Scroll position management
   const [inputTabScrollPosition, setInputTabScrollPosition] = useState(0)
   const [changesTabScrollPosition, setChangesTabScrollPosition] = useState(0)
+  const [editInputTabScrollPosition, setEditInputTabScrollPosition] = useState(0)
+  const [editChangesTabScrollPosition, setEditChangesTabScrollPosition] = useState(0)
+  
+  // Refs for scroll management
   const inputTabRef = useRef(null)
   const changesTabRef = useRef(null)
+  const editInputTabRef = useRef(null)
+  const editChangesTabRef = useRef(null)
 
 const handleInputProcess = async () => {
     setIsProcessing(true)
@@ -57,9 +78,96 @@ const handleInputProcess = async () => {
 setIsProcessing(false)
   }
 
+// Edit tab handler functions
+  const handleEditInputProcess = async () => {
+    setEditIsProcessing(true)
+    
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    if (editInputText.trim()) {
+      try {
+        // Parse the JSON input
+        const parsed = JSON.parse(editInputText)
+        
+        // Process the fileContent to remove LineNumber prefixes
+        let cleanedContent = ''
+        if (parsed.fileContent) {
+          cleanedContent = processFileContent(parsed.fileContent)
+        }
+        
+        // Store parsed data with cleaned content
+        setEditParsedData({
+          ...parsed,
+          cleanedContent
+        })
+        
+        setEditInputTab('files') // Switch to Actual Files tab automatically
+        toast.success('Request processed successfully!')
+      } catch (error) {
+        toast.error('Invalid JSON format. Please check your input.')
+      }
+    } else {
+      toast.warning('Please enter some request text to process')
+    }
+    
+    setEditIsProcessing(false)
+  }
+
+  const handleEditProcessInput = async () => {
+    if (!editText.trim()) {
+      toast.error('Please enter some text to transform')
+      return
+    }
+
+    setEditIsProcessing(true)
+    
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    const extractedText = extractAllTextValues(editText)
+    setEditProcessedCode(extractedText || "No valid text found")
+    setEditProcessingStats({
+      lineCount: (extractedText || editText).split('\n').length,
+      processingTime: 1500,
+      codeType: getLanguageFromContent(extractedText || editText)
+    })
+    
+    setEditIsProcessing(false)
+    setEditChangesTab('output')
+    
+    if (extractedText) {
+      toast.success('Successfully extracted text content!')
+    } else {
+      toast.warning('No valid text patterns found in input')
+    }
+  }
+
+  const handleEditCopyCode = () => {
+    navigator.clipboard.writeText(editProcessedCode)
+    toast.success('Code copied to clipboard!')
+  }
+
+  const handleEditClearAll = () => {
+    setEditText('')
+    setEditProcessedCode('')
+    setEditProcessingStats({ lineCount: 0, processingTime: 0, codeType: 'html' })
+    toast.info('Workspace cleared')
+  }
+
+  const handleEditCodeChange = (newCode) => {
+    setEditProcessedCode(newCode)
+    setEditProcessingStats(prev => ({
+      ...prev,
+      lineCount: newCode.split('\n').length
+    }))
+  }
+
   // Save scroll position when switching away from a tab
   const saveScrollPosition = (tabName) => {
-    if (tabName === 'input' && inputTabRef.current) {
+    if (tabName === 'edit' && editInputTabRef.current) {
+      setEditInputTabScrollPosition(editInputTabRef.current.scrollTop)
+    } else if (tabName === 'error' && inputTabRef.current) {
       setInputTabScrollPosition(inputTabRef.current.scrollTop)
     } else if (tabName === 'changes' && changesTabRef.current) {
       setChangesTabScrollPosition(changesTabRef.current.scrollTop)
@@ -68,7 +176,9 @@ setIsProcessing(false)
 
   // Restore scroll position when switching to a tab
   const restoreScrollPosition = (tabName) => {
-    if (tabName === 'input' && inputTabRef.current) {
+    if (tabName === 'edit' && editInputTabRef.current) {
+      editInputTabRef.current.scrollTop = editInputTabScrollPosition
+    } else if (tabName === 'error' && inputTabRef.current) {
       inputTabRef.current.scrollTop = inputTabScrollPosition
     } else if (tabName === 'changes' && changesTabRef.current) {
       changesTabRef.current.scrollTop = changesTabScrollPosition
@@ -151,11 +261,20 @@ setIsProcessing(false)
 return extractedTexts.join('');
   }
 
-  // Effect to restore scroll position when switching to input tab
+// Effect to restore scroll position when switching to edit tab
   useEffect(() => {
-    if (activeTab === 'input') {
+    if (activeTab === 'edit') {
       setTimeout(() => {
-        restoreScrollPosition('input')
+        restoreScrollPosition('edit')
+      }, 100) // Small delay to ensure DOM is updated
+    }
+  }, [activeTab, editInputTabScrollPosition])
+
+  // Effect to restore scroll position when switching to error tab
+  useEffect(() => {
+    if (activeTab === 'error') {
+      setTimeout(() => {
+        restoreScrollPosition('error')
       }, 100) // Small delay to ensure DOM is updated
     }
   }, [activeTab, inputTabScrollPosition])
@@ -169,7 +288,7 @@ return extractedTexts.join('');
     }
   }, [activeTab, changesTabScrollPosition])
 
-  // Additional state variables needed
+// Additional state variables needed for Error tab
   const [processedCode, setProcessedCode] = useState('')
   const [processingStats, setProcessingStats] = useState({ lineCount: 0, processingTime: 0, codeType: 'html' })
   const [editorSettings, setEditorSettings] = useState({ 
@@ -181,6 +300,17 @@ return extractedTexts.join('');
   const [collapsedBlocks, setCollapsedBlocks] = useState(new Set())
   const codeEditorRef = useRef(null)
 
+  // Additional state variables needed for Edit tab
+  const [editProcessedCode, setEditProcessedCode] = useState('')
+  const [editProcessingStats, setEditProcessingStats] = useState({ lineCount: 0, processingTime: 0, codeType: 'html' })
+  const [editEditorSettings, setEditEditorSettings] = useState({ 
+    showLineNumbers: true, 
+    enableFolding: true, 
+    fontSize: 14, 
+    showErrors: true 
+  })
+  const [editCollapsedBlocks, setEditCollapsedBlocks] = useState(new Set())
+  const editCodeEditorRef = useRef(null)
 const handleProcessInput = async () => {
     if (!text.trim()) {
       toast.error('Please enter some text to transform')
