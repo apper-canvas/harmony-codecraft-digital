@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import ApperIcon from '../../ApperIcon'
 import CodeEditor from '../../CodeEditor'
 
-const ErrorInputTab = ({ inputText, setInputText, parsedData, setParsedData, isActive }) => {
+const ErrorInputTab = ({ inputText, setInputText, parsedData, setParsedData, clearAll, isActive }) => {
   const [inputTab, setInputTab] = useState('request')
   const [processedFiles, setProcessedFiles] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
