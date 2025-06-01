@@ -4,12 +4,35 @@ import { toast } from 'react-toastify'
 import ApperIcon from '../../ApperIcon'
 import CodeEditor from '../../CodeEditor'
 
-const ErrorChangesTab = ({ text, setText, processedCode, setProcessedCode }) => {
+const ErrorChangesTab = ({ text, setText, processedCode, setProcessedCode, isActive }) => {
   const [changesTab, setChangesTab] = useState('input')
   const [isProcessing, setIsProcessing] = useState(false)
   const [processingStats, setProcessingStats] = useState({ lineCount: 0, processingTime: 0, codeType: 'html' })
+  const [scrollPosition, setScrollPosition] = useState(0)
   
   const changesTabRef = useRef(null)
+
+  // Save scroll position when component becomes inactive
+  useEffect(() => {
+    const saveScroll = () => {
+      if (changesTabRef.current) {
+        setScrollPosition(changesTabRef.current.scrollTop)
+      }
+    }
+
+    if (!isActive) {
+      saveScroll()
+    }
+  }, [isActive])
+
+  // Restore scroll position when component becomes active
+  useEffect(() => {
+    if (isActive && changesTabRef.current && scrollPosition > 0) {
+      setTimeout(() => {
+        changesTabRef.current.scrollTop = scrollPosition
+      }, 100)
+    }
+  }, [isActive, scrollPosition])
 
   const handleProcessInput = async () => {
     if (!text.trim()) {

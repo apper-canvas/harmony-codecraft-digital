@@ -4,12 +4,35 @@ import { toast } from 'react-toastify'
 import ApperIcon from '../../ApperIcon'
 import CodeEditor from '../../CodeEditor'
 
-const ErrorInputTab = ({ inputText, setInputText, parsedData, setParsedData }) => {
+const ErrorInputTab = ({ inputText, setInputText, parsedData, setParsedData, isActive }) => {
   const [inputTab, setInputTab] = useState('request')
   const [processedFiles, setProcessedFiles] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [scrollPosition, setScrollPosition] = useState(0)
   
   const inputTabRef = useRef(null)
+
+  // Save scroll position when component becomes inactive
+  useEffect(() => {
+    const saveScroll = () => {
+      if (inputTabRef.current) {
+        setScrollPosition(inputTabRef.current.scrollTop)
+      }
+    }
+
+    if (!isActive) {
+      saveScroll()
+    }
+  }, [isActive])
+
+  // Restore scroll position when component becomes active
+  useEffect(() => {
+    if (isActive && inputTabRef.current && scrollPosition > 0) {
+      setTimeout(() => {
+        inputTabRef.current.scrollTop = scrollPosition
+      }, 100)
+    }
+  }, [isActive, scrollPosition])
 
   // Helper function to process fileContent and remove LineNumber prefixes
   const processFileContent = (fileContent) => {

@@ -70,12 +70,13 @@ const ErrorTab = ({
           setParsedData={setParsedData}
         />
       )}
-      {errorTab === 'changes' && (
+{errorTab === 'changes' && (
         <ErrorChangesTab 
           text={changesText}
           setText={setChangesText}
           processedCode={processedCode}
           setProcessedCode={setProcessedCode}
+          isActive={isActive && errorTab === 'changes'}
         />
       )}
     </motion.div>

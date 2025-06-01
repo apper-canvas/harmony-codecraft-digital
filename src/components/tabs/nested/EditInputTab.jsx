@@ -17,9 +17,31 @@ const EditInputTab = ({
   const [inputTab, setInputTab] = useState('request')
   const [processedFiles, setProcessedFiles] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
-  
-  const inputTabRef = useRef(null)
-// Helper function to process fileContent and remove LineNumber prefixes
+const inputTabRef = useRef(null)
+
+  // Save scroll position when component becomes inactive
+  useEffect(() => {
+    const saveScroll = () => {
+      if (inputTabRef.current) {
+        setScrollPosition(inputTabRef.current.scrollTop)
+      }
+    }
+
+    if (!isActive) {
+      saveScroll()
+    }
+  }, [isActive])
+
+  // Restore scroll position when component becomes active
+  useEffect(() => {
+    if (isActive && inputTabRef.current && scrollPosition > 0) {
+      setTimeout(() => {
+        inputTabRef.current.scrollTop = scrollPosition
+      }, 100)
+    }
+  }, [isActive, scrollPosition])
+
+  // Helper function to process codebase files
   const processFileContent = (fileContent) => {
     const lines = fileContent.split('\n')
     const cleanedLines = lines.map(line => {

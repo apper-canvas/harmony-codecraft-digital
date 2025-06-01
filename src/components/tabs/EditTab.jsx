@@ -66,7 +66,7 @@ const EditTab = ({
       </div>
 
       {/* Tab Content */}
-      {editTab === 'input' && (
+{editTab === 'input' && (
         <EditInputTab 
           inputText={inputText}
           setInputText={setInputText}
@@ -76,6 +76,7 @@ const EditTab = ({
           setCodebaseFiles={setCodebaseFiles}
           activeFileTab={activeFileTab}
           setActiveFileTab={setActiveFileTab}
+          isActive={isActive && editTab === 'input'}
         />
       )}
       {editTab === 'changes' && (
