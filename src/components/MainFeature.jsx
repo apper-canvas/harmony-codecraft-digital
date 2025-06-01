@@ -7,19 +7,21 @@ function MainFeature() {
   const [inputText, setInputText] = useState('')
   const [processedCode, setProcessedCode] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
-  const [editorSettings, setEditorSettings] = useState({
+const [editorSettings, setEditorSettings] = useState({
     showLineNumbers: true,
     theme: 'light',
-    fontSize: 14
+    fontSize: 14,
+    enableFolding: true
   })
-  const [processingStats, setProcessingStats] = useState({
+const [processingStats, setProcessingStats] = useState({
     lineCount: 0,
     processingTime: 0,
     codeType: 'html'
   })
+  const [isEditing, setIsEditing] = useState(false)
+  const [collapsedBlocks, setCollapsedBlocks] = useState(new Set())
   
-const codeEditorRef = useRef(null)
-
+  const codeEditorRef = useRef(null)
   // Extract text values from input using the provided function
   function extractAllTextValues(input) {
     const lines = input.split('\n');
@@ -89,11 +91,30 @@ const codeEditorRef = useRef(null)
     setProcessedCode('')
     setProcessingStats({ lineCount: 0, processingTime: 0, codeType: 'html' })
     toast.info('Workspace cleared')
+}
+
+  const handleCodeChange = (newCode) => {
+    setProcessedCode(newCode)
+    setProcessingStats(prev => ({
+      ...prev,
+      lineCount: newCode.split('\n').length
+    }))
+  }
+
+  const toggleCodeBlock = (lineIndex) => {
+    setCollapsedBlocks(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(lineIndex)) {
+        newSet.delete(lineIndex)
+      } else {
+        newSet.add(lineIndex)
+      }
+      return newSet
+    })
   }
 
   // Generate line numbers
   const lineNumbers = processedCode.split('\n').map((_, index) => index + 1)
-
   // Simple syntax highlighting
   const highlightSyntax = (code) => {
     return code
@@ -225,7 +246,7 @@ const codeEditorRef = useRef(null)
           <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
             Code Output
           </h3>
-          <div className="flex items-center space-x-4">
+<div className="flex items-center space-x-4">
             <label className="flex items-center space-x-2 text-sm">
               <input
                 type="checkbox"
@@ -235,6 +256,21 @@ const codeEditorRef = useRef(null)
               />
               <span className="text-surface-600 dark:text-surface-300">Line Numbers</span>
             </label>
+            <label className="flex items-center space-x-2 text-sm">
+              <input
+                type="checkbox"
+                checked={editorSettings.enableFolding}
+                onChange={(e) => setEditorSettings(prev => ({ ...prev, enableFolding: e.target.checked }))}
+                className="rounded border-surface-300"
+              />
+              <span className="text-surface-600 dark:text-surface-300">Code Folding</span>
+            </label>
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="px-3 py-1 text-sm bg-primary-100 hover:bg-primary-200 dark:bg-primary-800 dark:hover:bg-primary-700 text-primary-700 dark:text-primary-300 rounded-lg transition-colors"
+            >
+              {isEditing ? 'View' : 'Edit'}
+            </button>
             <select
               value={editorSettings.fontSize}
               onChange={(e) => setEditorSettings(prev => ({ ...prev, fontSize: parseInt(e.target.value) }))}
