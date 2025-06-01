@@ -991,24 +991,14 @@ const handleCopyCode = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="relative">
-                            <Editor
-                              height="400px"
+<div className="relative">
+                            <CodeEditor
+                              code={parsedData.cleanedContent || ''}
+                              onChange={() => {}}
+                              onCopy={() => navigator.clipboard.writeText(parsedData.cleanedContent || '')}
                               language={getLanguageFromContent(parsedData.cleanedContent || '')}
-                              value={parsedData.cleanedContent || ''}
-                              theme={isDarkMode ? 'vs-dark' : 'vs-light'}
-                              options={{
-                                readOnly: true,
-                                minimap: { enabled: false },
-                                scrollBeyondLastLine: false,
-                                fontSize: 14,
-                                lineHeight: 20,
-                                fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace',
-                                wordWrap: 'on',
-                                lineNumbers: 'on',
-                                folding: true,
-                                automaticLayout: true
-                              }}
+                              isDarkMode={isDarkMode}
+                              readOnly={true}
                             />
                           </div>
                         </div>
@@ -1142,10 +1132,9 @@ const handleCopyCode = () => {
               </motion.div>
             )}
           </motion.div>
-        )}
+)}
       </div>
-    </>
-  )
-}
+    )
+  }
 
 export default MainFeature
