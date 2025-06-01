@@ -56,26 +56,8 @@ function Home() {
           </div>
         </div>
       </motion.header>
-
-      {/* Main Content */}
+{/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-surface-900 dark:text-surface-100 mb-6 text-shadow">
-            Transform Your Ideas Into
-            <span className="block bg-gradient-to-r from-primary-500 via-secondary-500 to-accent bg-clip-text text-transparent animate-glow">
-              Beautiful Code
-            </span>
-          </h2>
-          <p className="text-xl text-surface-600 dark:text-surface-300 max-w-3xl mx-auto leading-relaxed">
-            Enter any text and watch it transform into properly formatted HTML and JavaScript code with syntax highlighting and line numbers.
-          </p>
-        </motion.div>
-
         <MainFeature />
       </main>
 
