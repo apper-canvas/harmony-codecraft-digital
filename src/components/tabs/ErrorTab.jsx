@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import ApperIcon from '../ApperIcon'
 import ErrorInputTab from './nested/ErrorInputTab'
 import ErrorChangesTab from './nested/ErrorChangesTab'
-
 const ErrorTab = ({ 
   inputText, 
   setInputText, 
@@ -16,6 +15,34 @@ const ErrorTab = ({
   activeSubTab,
   setActiveSubTab
 }) => {
+  // Editor settings state for error tab
+  const [editorSettings, setEditorSettings] = useState({
+    fontSize: 14,
+    showLineNumbers: true,
+    enableFolding: true
+  })
+
+  // Load editor settings from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('errorTabEditorSettings')
+      if (saved) {
+        setEditorSettings(JSON.parse(saved))
+      }
+    } catch (error) {
+      console.error('Failed to load error tab editor settings:', error)
+    }
+  }, [])
+
+  // Save editor settings to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('errorTabEditorSettings', JSON.stringify(editorSettings))
+    } catch (error) {
+      console.error('Failed to save error tab editor settings:', error)
+    }
+  }, [editorSettings])
+
 const errorTab = activeSubTab
   const [errorInputTab, setErrorInputTab] = useState('request')
   const [errorOutputTab, setErrorOutputTab] = useState('input')
