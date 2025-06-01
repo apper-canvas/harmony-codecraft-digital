@@ -11,31 +11,8 @@ function CodeEditor({
   isDarkMode,
   className = "",
 editorSettings = { showLineNumbers: false, enableFolding: true, fontSize: 14, showErrors: false },
-  setEditorSettings
+setEditorSettings = () => {}
 }) {
-// Load settings from localStorage on component mount
-  useEffect(() => {
-    try {
-      const savedSettings = localStorage.getItem('codeEditorSettings')
-      if (savedSettings) {
-        const parsed = JSON.parse(savedSettings)
-        setEditorSettings(prev => ({ ...prev, ...parsed }))
-      }
-    } catch (error) {
-      console.warn('Failed to load editor settings from localStorage:', error)
-    }
-  }, [])
-// Save settings to localStorage whenever they change
-  useEffect(() => {
-    try {
-      localStorage.setItem('codeEditorSettings', JSON.stringify({
-        showLineNumbers: editorSettings.showLineNumbers,
-        fontSize: editorSettings.fontSize
-      }))
-    } catch (error) {
-      console.warn('Failed to save editor settings to localStorage:', error)
-    }
-  }, [editorSettings.showLineNumbers, editorSettings.fontSize])
   const codeEditorRef = useRef(null)
   // Handle Monaco Editor mount
   const handleEditorDidMount = (editor, monaco) => {
