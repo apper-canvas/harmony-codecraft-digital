@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Editor } from '@monaco-editor/react'
 import ApperIcon from './ApperIcon'
