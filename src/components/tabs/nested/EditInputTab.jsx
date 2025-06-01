@@ -5,15 +5,16 @@ import { Editor } from '@monaco-editor/react'
 import ApperIcon from '../../ApperIcon'
 
 const EditInputTab = () => {
-  const [inputTab, setInputTab] = useState('request')
+const [inputTab, setInputTab] = useState('request')
   const [inputText, setInputText] = useState('')
   const [processedFiles, setProcessedFiles] = useState('')
   const [parsedData, setParsedData] = useState(null)
+  const [codebaseFiles, setCodebaseFiles] = useState([])
+  const [activeFileTab, setActiveFileTab] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
   
   const inputTabRef = useRef(null)
-
-  // Helper function to process fileContent and remove LineNumber prefixes
+// Helper function to process fileContent and remove LineNumber prefixes
   const processFileContent = (fileContent) => {
     const lines = fileContent.split('\n')
     const cleanedLines = lines.map(line => {
@@ -24,7 +25,43 @@ const EditInputTab = () => {
     return cleanedLines.join('\n')
   }
 
-  const handleInputProcess = async () => {
+  // Parse codebase string to extract individual files
+  const parseCodebase = (codebaseString) => {
+    const files = []
+    const lines = codebaseString.split('\n')
+    let currentFile = null
+    let currentContent = []
+
+    for (const line of lines) {
+      if (line.startsWith('FileName:')) {
+        // Save previous file if exists
+        if (currentFile) {
+          files.push({
+            name: currentFile,
+            content: currentContent.join('\n')
+          })
+        }
+        // Start new file
+        currentFile = line.replace('FileName:', '')
+        currentContent = []
+      } else if (line.startsWith('LineNumber:')) {
+        // Extract content after LineNumber:X:
+        const match = line.match(/^LineNumber:\d+:(.*)$/)
+        currentContent.push(match ? match[1] : '')
+      }
+    }
+
+    // Save last file
+    if (currentFile) {
+      files.push({
+        name: currentFile,
+        content: currentContent.join('\n')
+      })
+    }
+
+    return files
+  }
+const handleInputProcess = async () => {
     setIsProcessing(true)
     
     // Simulate processing delay
@@ -35,17 +72,16 @@ const EditInputTab = () => {
         // Parse the JSON input
         const parsed = JSON.parse(inputText)
         
-        // Process the fileContent to remove LineNumber prefixes
-        let cleanedContent = ''
-        if (parsed.fileContent) {
-          cleanedContent = processFileContent(parsed.fileContent)
+        // Parse codebase to extract individual files
+        let files = []
+        if (parsed.codebase) {
+          files = parseCodebase(parsed.codebase)
         }
         
-        // Store parsed data with cleaned content
-        setParsedData({
-          ...parsed,
-          cleanedContent
-        })
+        // Store parsed data with extracted files
+        setParsedData(parsed)
+        setCodebaseFiles(files)
+        setActiveFileTab(0) // Reset to first file
         
         setInputTab('files') // Switch to Actual Files tab automatically
         toast.success('Request processed successfully!')
@@ -202,23 +238,23 @@ const EditInputTab = () => {
             </div>
           </div>
           
-          {parsedData ? (
+{parsedData ? (
             <div className="space-y-6">
               {/* Metadata Display */}
               <div className="bg-surface-50 rounded-xl border border-surface-200 p-6">
-                <h4 className="text-lg font-semibold text-surface-800 mb-4">File Information</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h4 className="text-lg font-semibold text-surface-800 mb-4">Request Information</h4>
+                <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-600 mb-1">File Path:</label>
-                    <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                      {parsedData.filePath || 'N/A'}
+                    <label className="block text-sm font-medium text-surface-600 mb-1">Query:</label>
+                    <p className="text-surface-800 bg-white px-3 py-2 rounded border text-sm">
+                      {parsedData.query || 'N/A'}
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-600 mb-1">File Type:</label>
-                    <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                      {parsedData.fileType || 'N/A'}
-                    </p>
+                    <label className="block text-sm font-medium text-surface-600 mb-1">File List:</label>
+                    <pre className="text-surface-800 bg-white px-3 py-2 rounded border text-sm whitespace-pre-wrap font-mono">
+                      {parsedData.file_list || 'N/A'}
+                    </pre>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-600 mb-1">App ID:</label>
@@ -226,55 +262,55 @@ const EditInputTab = () => {
                       {parsedData.appId || 'N/A'}
                     </p>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Error Summary:</label>
-                    <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                      {parsedData.syntaxErrorSummary || 'No errors'}
-                    </p>
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Errors:</label>
-                    <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                      {parsedData.syntaxErrors || 'None'}
-                    </p>
-                  </div>
                 </div>
               </div>
 
-              {/* Code Editor */}
-              <div className="bg-surface-50 rounded-xl overflow-hidden border border-surface-200">
-                <div className="bg-surface-100 px-4 py-2 border-b border-surface-200">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-surface-700">
-                      {parsedData.filePath ? parsedData.filePath.split('/').pop() : 'processed-file'}
-                    </span>
-                    <div className="flex items-center space-x-2 text-xs text-surface-500">
-                      <span>{parsedData.fileType || 'Text'}</span>
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    </div>
+              {/* Codebase Files Display */}
+              {codebaseFiles.length > 0 && (
+                <div className="bg-surface-50 rounded-xl border border-surface-200">
+                  <div className="bg-surface-100 px-4 py-2 border-b border-surface-200">
+                    <h4 className="text-lg font-semibold text-surface-800">Codebase Files</h4>
+                  </div>
+                  
+                  {/* File Tabs */}
+                  <div className="flex overflow-x-auto bg-surface-100 border-b border-surface-200">
+                    {codebaseFiles.map((file, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setActiveFileTab(index)}
+                        className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-r border-surface-200 transition-colors ${
+                          activeFileTab === index
+                            ? 'bg-white text-primary-600 border-b-2 border-primary-600'
+                            : 'text-surface-600 hover:text-surface-800 hover:bg-surface-50'
+                        }`}
+                      >
+                        {file.name}
+                      </button>
+                    ))}
+                  </div>
+{/* Monaco Editor for Active File */}
+                  <div className="relative">
+                    <Editor
+                      height="500px"
+                      language={getLanguageFromContent(codebaseFiles[activeFileTab]?.content || '')}
+                      value={codebaseFiles[activeFileTab]?.content || ''}
+                      theme={isDarkMode ? 'vs-dark' : 'vs-light'}
+                      options={{
+                        readOnly: true,
+                        minimap: { enabled: false },
+                        scrollBeyondLastLine: false,
+                        fontSize: 14,
+                        lineHeight: 20,
+                        fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace',
+                        wordWrap: 'on',
+                        lineNumbers: 'on',
+                        folding: true,
+                        automaticLayout: true
+                      }}
+                    />
                   </div>
                 </div>
-                <div className="relative">
-                  <Editor
-                    height="400px"
-                    language={getLanguageFromContent(parsedData.cleanedContent || '')}
-                    value={parsedData.cleanedContent || ''}
-                    theme={isDarkMode ? 'vs-dark' : 'vs-light'}
-                    options={{
-                      readOnly: true,
-                      minimap: { enabled: false },
-                      scrollBeyondLastLine: false,
-                      fontSize: 14,
-                      lineHeight: 20,
-                      fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace',
-                      wordWrap: 'on',
-                      lineNumbers: 'on',
-                      folding: true,
-                      automaticLayout: true
-                    }}
-                  />
-                </div>
-              </div>
+              )}
             </div>
           ) : (
             <div className="bg-surface-50 rounded-xl border-2 border-dashed border-surface-300 p-12 text-center">
