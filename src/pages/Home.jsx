@@ -5,7 +5,7 @@ import ApperIcon from '../components/ApperIcon'
 
 function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false)
-  const [activeTab, setActiveTab] = useState('Edit')
+  const [activeTab, setActiveTab] = useState('edit')
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode)
@@ -43,13 +43,13 @@ function Home() {
 
             <div className="flex items-center space-x-4">
               {/* Edit/Error Tabs */}
-              <div className="flex bg-surface-100/50 dark:bg-surface-800/50 rounded-xl p-1 backdrop-blur-sm">
+<div className="flex bg-surface-100/50 dark:bg-surface-800/50 rounded-xl p-1 backdrop-blur-sm">
                 <motion.button
-                  onClick={() => setActiveTab('Edit')}
+                  onClick={() => setActiveTab('edit')}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                    activeTab === 'Edit'
+                    activeTab === 'edit'
                       ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-soft'
                       : 'text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400'
                   }`}
