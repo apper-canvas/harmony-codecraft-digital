@@ -9,6 +9,10 @@ import TabNavigation from './TabNavigation'
 function MainFeature() {
   const [activeTab, setActiveTab] = useState('edit')
   
+  // Sub-tab state for Edit and Error tabs
+  const [editSubTab, setEditSubTab] = useState('input')
+  const [errorSubTab, setErrorSubTab] = useState('input')
+  
   // Error tab state variables
   const [inputTab, setInputTab] = useState('request')
   const [inputText, setInputText] = useState('')
@@ -402,655 +406,751 @@ return (
           saveScrollPosition={saveScrollPosition}
         />
 
-        {/* Edit Tab Content */}
+{/* Edit Tab Content */}
         {activeTab === 'edit' && (
           <motion.div
-            ref={editInputTabRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8 max-h-screen overflow-y-auto custom-scrollbar"
+            className="mt-8"
           >
-            {/* Input Section Tabs */}
-            <div className="glass-panel flex space-x-2 mb-6 p-2">
-              <button
-                onClick={() => setEditInputTab('request')}
-                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
-                  editInputTab === 'request' 
-                    ? 'bg-primary-500 text-white shadow-lg' 
-                    : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
-                }`}
-              >
-                Request
-              </button>
-              <button
-                onClick={() => setEditInputTab('files')}
-                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
-                  editInputTab === 'files' 
-                    ? 'bg-primary-500 text-white shadow-lg' 
-                    : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
-                }`}
-              >
-                Actual Files
-              </button>
+            {/* Sub-Tab Navigation for Edit */}
+            <div className="glass-panel p-2 mb-6">
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setEditSubTab('input')}
+                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                    editSubTab === 'input'
+                      ? 'bg-primary-500 text-white shadow-glow'
+                      : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <ApperIcon name="FileText" className="w-4 h-4" />
+                    <span>Input</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setEditSubTab('changes')}
+                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                    editSubTab === 'changes'
+                      ? 'bg-primary-500 text-white shadow-glow'
+                      : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <ApperIcon name="Code2" className="w-4 h-4" />
+                    <span>Changes</span>
+                  </div>
+                </button>
+              </div>
             </div>
 
-            {/* Input Tab Content */}
-            {editInputTab === 'request' ? (
+            {/* Input Sub-Tab Content */}
+            {editSubTab === 'input' && (
               <motion.div
+                ref={editInputTabRef}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-8 glass-panel rounded-2xl"
+                className="max-h-screen overflow-y-auto custom-scrollbar"
               >
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-surface-800">
-                    Request Input
-                  </h3>
-                  <div className="flex items-center space-x-2 text-sm text-surface-600">
-                    <ApperIcon name="Type" className="w-4 h-4" />
-                    <span>Enter your request</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-6">
-                  <div>
-                    <div>
-                      <label className="block text-sm font-medium text-surface-700 mb-3">
-                        Request Text
-                      </label>
-                      <div className="relative">
-                        <textarea
-                          value={editInputText}
-                          onChange={(e) => setEditInputText(e.target.value)}
-                          onPaste={(e) => {
-                            // Auto-process after paste with small delay to ensure content is set
-                            setTimeout(() => {
-                              handleEditInputProcess()
-                            }, 1000)
-                          }}
-                          placeholder="Enter your request text here..."
-                          className="w-full h-64 p-6 bg-white bg-opacity-50 border border-surface-300 rounded-xl resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-surface-800 placeholder-surface-500 backdrop-blur-sm"
-                          style={{ fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace' }}
-                        />
-                        <div className="absolute bottom-4 right-4 text-xs text-surface-500">
-                          {editInputText.length} characters
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleEditInputProcess}
-                  disabled={editIsProcessing}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                >
-                  {editIsProcessing ? (
-                    <>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      >
-                        <ApperIcon name="Loader2" className="w-5 h-5" />
-                      </motion.div>
-                      <span>Processing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ApperIcon name="Play" className="w-5 h-5" />
-                      <span>Process Request</span>
-                    </>
-                  )}
-                </motion.button>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-8 glass-panel rounded-2xl"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-surface-800">
+                {/* Input Section Tabs */}
+                <div className="glass-panel flex space-x-2 mb-6 p-2">
+                  <button
+                    onClick={() => setEditInputTab('request')}
+                    className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                      editInputTab === 'request' 
+                        ? 'bg-primary-500 text-white shadow-lg' 
+                        : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
+                    }`}
+                  >
+                    Request
+                  </button>
+                  <button
+                    onClick={() => setEditInputTab('files')}
+                    className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                      editInputTab === 'files' 
+                        ? 'bg-primary-500 text-white shadow-lg' 
+                        : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
+                    }`}
+                  >
                     Actual Files
-                  </h3>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2 text-sm text-surface-600">
-                      <ApperIcon name="FileText" className="w-4 h-4" />
-                      <span>Processed files</span>
-                    </div>
-                    {editProcessedFiles && (
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => navigator.clipboard.writeText(editProcessedFiles)}
-                        className="p-2 bg-surface-100 hover:bg-surface-200 rounded-lg transition-colors"
-                        title="Copy to clipboard"
-                      >
-                        <ApperIcon name="Copy" className="w-4 h-4 text-surface-600" />
-                      </motion.button>
-                    )}
-                  </div>
+                  </button>
                 </div>
-                
-                {editParsedData ? (
-                  <div className="space-y-6">
-                    {/* Metadata Display */}
-                    <div className="bg-surface-50 rounded-xl border border-surface-200 p-6">
-                      <h4 className="text-lg font-semibold text-surface-800 mb-4">File Information</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-surface-600 mb-1">File Path:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {editParsedData.filePath || 'N/A'}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-surface-600 mb-1">File Type:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {editParsedData.fileType || 'N/A'}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-surface-600 mb-1">App ID:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {editParsedData.appId || 'N/A'}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Error Summary:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {editParsedData.syntaxErrorSummary || 'No errors'}
-                          </p>
-                        </div>
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Errors:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {editParsedData.syntaxErrors || 'None'}
-                          </p>
-                        </div>
+
+                {/* Input Tab Content */}
+                {editInputTab === 'request' ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-8 glass-panel rounded-2xl"
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-surface-800">
+                        Request Input
+                      </h3>
+                      <div className="flex items-center space-x-2 text-sm text-surface-600">
+                        <ApperIcon name="Type" className="w-4 h-4" />
+                        <span>Enter your request</span>
                       </div>
                     </div>
-
-                    {/* Code Editor */}
-                    <div className="bg-surface-50 rounded-xl overflow-hidden border border-surface-200">
-                      <div className="bg-surface-100 px-4 py-2 border-b border-surface-200">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-surface-700">
-                            {editParsedData.filePath ? editParsedData.filePath.split('/').pop() : 'processed-file'}
-                          </span>
-                          <div className="flex items-center space-x-2 text-xs text-surface-500">
-                            <span>{editParsedData.fileType || 'Text'}</span>
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 mb-3">
+                            Request Text
+                          </label>
+                          <div className="relative">
+                            <textarea
+                              value={editInputText}
+                              onChange={(e) => setEditInputText(e.target.value)}
+                              onPaste={(e) => {
+                                // Auto-process after paste with small delay to ensure content is set
+                                setTimeout(() => {
+                                  handleEditInputProcess()
+                                }, 1000)
+                              }}
+                              placeholder="Enter your request text here..."
+                              className="w-full h-64 p-6 bg-white bg-opacity-50 border border-surface-300 rounded-xl resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-surface-800 placeholder-surface-500 backdrop-blur-sm"
+                              style={{ fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace' }}
+                            />
+                            <div className="absolute bottom-4 right-4 text-xs text-surface-500">
+                              {editInputText.length} characters
+                            </div>
                           </div>
                         </div>
                       </div>
-                      <div className="relative">
-                        <Editor
-                          height="400px"
-                          language={getLanguageFromContent(editParsedData.cleanedContent || '')}
-                          value={editParsedData.cleanedContent || ''}
-                          theme={isDarkMode ? 'vs-dark' : 'vs-light'}
-                          options={{
-                            readOnly: true,
-                            minimap: { enabled: false },
-                            scrollBeyondLastLine: false,
-                            fontSize: 14,
-                            lineHeight: 20,
-                            fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace',
-                            wordWrap: 'on',
-                            lineNumbers: 'on',
-                            folding: true,
-                            automaticLayout: true
-                          }}
-                        />
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleEditInputProcess}
+                      disabled={editIsProcessing}
+                      className="w-full py-4 px-6 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    >
+                      {editIsProcessing ? (
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          >
+                            <ApperIcon name="Loader2" className="w-5 h-5" />
+                          </motion.div>
+                          <span>Processing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <ApperIcon name="Play" className="w-5 h-5" />
+                          <span>Process Request</span>
+                        </>
+                      )}
+                    </motion.button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-8 glass-panel rounded-2xl"
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-surface-800">
+                        Actual Files
+                      </h3>
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 text-sm text-surface-600">
+                          <ApperIcon name="FileText" className="w-4 h-4" />
+                          <span>Processed files</span>
+                        </div>
+                        {editProcessedFiles && (
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => navigator.clipboard.writeText(editProcessedFiles)}
+                            className="p-2 bg-surface-100 hover:bg-surface-200 rounded-lg transition-colors"
+                            title="Copy to clipboard"
+                          >
+                            <ApperIcon name="Copy" className="w-4 h-4 text-surface-600" />
+                          </motion.button>
+                        )}
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="bg-surface-50 rounded-xl border-2 border-dashed border-surface-300 p-12 text-center">
-                    <ApperIcon name="FileText" className="w-12 h-12 text-surface-400 mx-auto mb-4" />
-                    <h4 className="text-lg font-medium text-surface-600 mb-2">No files processed yet</h4>
-                    <p className="text-surface-500">Process a request to see the generated files here.</p>
-                  </div>
+                    
+                    {editParsedData ? (
+                      <div className="space-y-6">
+                        {/* Metadata Display */}
+                        <div className="bg-surface-50 rounded-xl border border-surface-200 p-6">
+                          <h4 className="text-lg font-semibold text-surface-800 mb-4">File Information</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-surface-600 mb-1">File Path:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {editParsedData.filePath || 'N/A'}
+                              </p>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-surface-600 mb-1">File Type:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {editParsedData.fileType || 'N/A'}
+                              </p>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-surface-600 mb-1">App ID:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {editParsedData.appId || 'N/A'}
+                              </p>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Error Summary:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {editParsedData.syntaxErrorSummary || 'No errors'}
+                              </p>
+                            </div>
+                            <div className="md:col-span-2">
+                              <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Errors:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {editParsedData.syntaxErrors || 'None'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Code Editor */}
+                        <div className="bg-surface-50 rounded-xl overflow-hidden border border-surface-200">
+                          <div className="bg-surface-100 px-4 py-2 border-b border-surface-200">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-surface-700">
+                                {editParsedData.filePath ? editParsedData.filePath.split('/').pop() : 'processed-file'}
+                              </span>
+                              <div className="flex items-center space-x-2 text-xs text-surface-500">
+                                <span>{editParsedData.fileType || 'Text'}</span>
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <Editor
+                              height="400px"
+                              language={getLanguageFromContent(editParsedData.cleanedContent || '')}
+                              value={editParsedData.cleanedContent || ''}
+                              theme={isDarkMode ? 'vs-dark' : 'vs-light'}
+                              options={{
+                                readOnly: true,
+                                minimap: { enabled: false },
+                                scrollBeyondLastLine: false,
+                                fontSize: 14,
+                                lineHeight: 20,
+                                fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace',
+                                wordWrap: 'on',
+                                lineNumbers: 'on',
+                                folding: true,
+                                automaticLayout: true
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-surface-50 rounded-xl border-2 border-dashed border-surface-300 p-12 text-center">
+                        <ApperIcon name="FileText" className="w-12 h-12 text-surface-400 mx-auto mb-4" />
+                        <h4 className="text-lg font-medium text-surface-600 mb-2">No files processed yet</h4>
+                        <p className="text-surface-500">Process a request to see the generated files here.</p>
+                      </div>
+                    )}
+                  </motion.div>
                 )}
               </motion.div>
             )}
 
-            {/* Edit Changes Tab Content */}
-            <div ref={editChangesTabRef} className="max-h-screen overflow-y-auto custom-scrollbar">
-              {/* Inner Tab Bar for Changes */}
-              <div className="glass-panel p-2 mb-6">
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => setEditChangesTab('input')}
-                    className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-                      editChangesTab === 'input'
-                        ? 'bg-primary-500 text-white shadow-glow'
-                        : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <ApperIcon name="FileText" className="w-4 h-4" />
-                      <span>Streaming Response</span>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => setEditChangesTab('output')}
-                    className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-                      editChangesTab === 'output'
-                        ? 'bg-primary-500 text-white shadow-glow'
-                        : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <ApperIcon name="Code2" className="w-4 h-4" />
-                      <span>Actual Response</span>
-                    </div>
-                  </button>
+            {/* Changes Sub-Tab Content */}
+            {editSubTab === 'changes' && (
+              <motion.div
+                ref={editChangesTabRef}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-h-screen overflow-y-auto custom-scrollbar"
+              >
+                {/* Inner Tab Bar for Changes */}
+                <div className="glass-panel p-2 mb-6">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => setEditChangesTab('input')}
+                      className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                        editChangesTab === 'input'
+                          ? 'bg-primary-500 text-white shadow-glow'
+                          : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <ApperIcon name="FileText" className="w-4 h-4" />
+                        <span>Streaming Response</span>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => setEditChangesTab('output')}
+                      className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                        editChangesTab === 'output'
+                          ? 'bg-primary-500 text-white shadow-glow'
+                          : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <ApperIcon name="Code2" className="w-4 h-4" />
+                        <span>Actual Response</span>
+                      </div>
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Input Text Tab */}
-              {editChangesTab === 'input' && (
-                <div className="glass-panel p-6 sm:p-8">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-                    <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
-                      Streaming Response
-                    </h3>
-                    <div className="flex items-center space-x-4">
-                      <span className="text-sm text-surface-600 dark:text-surface-300">
-                        {editText.length} characters
-                      </span>
+                {/* Input Text Tab */}
+                {editChangesTab === 'input' && (
+                  <div className="glass-panel p-6 sm:p-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
+                        Streaming Response
+                      </h3>
+                      <div className="flex items-center space-x-4">
+                        <span className="text-sm text-surface-600 dark:text-surface-300">
+                          {editText.length} characters
+                        </span>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={handleEditClearAll}
+                          className="px-4 py-2 text-sm bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 rounded-lg transition-colors duration-300"
+                        >
+                          <ApperIcon name="Trash2" className="w-4 h-4" />
+                        </motion.button>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <textarea
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        placeholder="Enter your text here... Try lists, key-value pairs, or any text content!"
+                        className="neu-input w-full h-32 sm:h-40 resize-none focus:outline-none text-surface-900 dark:text-surface-100 dark:bg-surface-800 dark:border-surface-600"
+                        rows={6}
+                      />
+                      
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleEditClearAll}
-                        className="px-4 py-2 text-sm bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 rounded-lg transition-colors duration-300"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleEditProcessInput}
+                        disabled={editIsProcessing || !editText.trim()}
+                        className="neu-button w-full sm:w-auto bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition-all duration-300"
                       >
-                        <ApperIcon name="Trash2" className="w-4 h-4" />
+                        <div className="flex items-center justify-center space-x-3">
+                          {editIsProcessing ? (
+                            <>
+                              <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              >
+                                <ApperIcon name="Loader" className="w-5 h-5" />
+                              </motion.div>
+                              <span>Processing...</span>
+                            </>
+                          ) : (
+                            <>
+                              <ApperIcon name="Play" className="w-5 h-5" />
+                              <span>Get Actual Response</span>
+                            </>
+                          )}
+                        </div>
                       </motion.button>
                     </div>
                   </div>
-                  
-                  <div className="space-y-4">
-                    <textarea
-                      value={editText}
-                      onChange={(e) => setEditText(e.target.value)}
-                      placeholder="Enter your text here... Try lists, key-value pairs, or any text content!"
-                      className="neu-input w-full h-32 sm:h-40 resize-none focus:outline-none text-surface-900 dark:text-surface-100 dark:bg-surface-800 dark:border-surface-600"
-                      rows={6}
-                    />
-                    
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleEditProcessInput}
-                      disabled={editIsProcessing || !editText.trim()}
-                      className="neu-button w-full sm:w-auto bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition-all duration-300"
-                    >
-                      <div className="flex items-center justify-center space-x-3">
-                        {editIsProcessing ? (
-                          <>
-                            <motion.div
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            >
-                              <ApperIcon name="Loader" className="w-5 h-5" />
-                            </motion.div>
-                            <span>Processing...</span>
-                          </>
-                        ) : (
-                          <>
-                            <ApperIcon name="Play" className="w-5 h-5" />
-                            <span>Get Actual Response</span>
-                          </>
-                        )}
-                      </div>
-                    </motion.button>
-                  </div>
-                </div>
-              )}
+                )}
 
-              {/* Code Output Tab */}
-              {editChangesTab === 'output' && (
-                <>
-                  {/* Code Editor */}
-                  <CodeEditor
-                    code={editProcessedCode}
-                    onChange={handleEditCodeChange}
-                    onCopy={handleEditCopyCode}
-                    language={getLanguageFromContent(editProcessedCode)}
-                    isDarkMode={isDarkMode}
-                  />
-                </>
-              )}
-            </div>
+                {/* Code Output Tab */}
+                {editChangesTab === 'output' && (
+                  <>
+                    {/* Code Editor */}
+                    <CodeEditor
+                      code={editProcessedCode}
+                      onChange={handleEditCodeChange}
+                      onCopy={handleEditCopyCode}
+                      language={getLanguageFromContent(editProcessedCode)}
+                      isDarkMode={isDarkMode}
+                    />
+                  </>
+                )}
+              </motion.div>
+            )}
           </motion.div>
         )}
 
-        {/* Error Tab Content */}
+{/* Error Tab Content */}
         {activeTab === 'error' && (
           <motion.div
-            ref={inputTabRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8 max-h-screen overflow-y-auto custom-scrollbar"
+            className="mt-8"
           >
-            {/* Input Section Tabs */}
-            <div className="glass-panel flex space-x-2 mb-6 p-2">
-              <button
-                onClick={() => setInputTab('request')}
-                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
-                  inputTab === 'request' 
-                    ? 'bg-primary-500 text-white shadow-lg' 
-                    : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
-                }`}
-              >
-                Request
-              </button>
-              <button
-                onClick={() => setInputTab('files')}
-                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
-                  inputTab === 'files' 
-                    ? 'bg-primary-500 text-white shadow-lg' 
-                    : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
-                }`}
-              >
-                Actual Files
-              </button>
+            {/* Sub-Tab Navigation for Error */}
+            <div className="glass-panel p-2 mb-6">
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setErrorSubTab('input')}
+                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                    errorSubTab === 'input'
+                      ? 'bg-primary-500 text-white shadow-glow'
+                      : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <ApperIcon name="FileText" className="w-4 h-4" />
+                    <span>Input</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setErrorSubTab('changes')}
+                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                    errorSubTab === 'changes'
+                      ? 'bg-primary-500 text-white shadow-glow'
+                      : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <ApperIcon name="Code2" className="w-4 h-4" />
+                    <span>Changes</span>
+                  </div>
+                </button>
+              </div>
             </div>
 
-            {/* Input Tab Content */}
-            {inputTab === 'request' ? (
+            {/* Input Sub-Tab Content */}
+            {errorSubTab === 'input' && (
               <motion.div
+                ref={inputTabRef}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-8 glass-panel rounded-2xl"
+                className="max-h-screen overflow-y-auto custom-scrollbar"
               >
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-surface-800">
-                    Request Input
-                  </h3>
-                  <div className="flex items-center space-x-2 text-sm text-surface-600">
-                    <ApperIcon name="Type" className="w-4 h-4" />
-                    <span>Enter your request</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-6">
-                  <div>
-                    <div>
-                      <label className="block text-sm font-medium text-surface-700 mb-3">
-                        Request Text
-                      </label>
-                      <div className="relative">
-                        <textarea
-                          value={inputText}
-                          onChange={(e) => setInputText(e.target.value)}
-                          onPaste={(e) => {
-                            // Auto-process after paste with small delay to ensure content is set
-                            setTimeout(() => {
-                              handleInputProcess()
-                            }, 1000)
-                          }}
-                          placeholder="Enter your request text here..."
-                          className="w-full h-64 p-6 bg-white bg-opacity-50 border border-surface-300 rounded-xl resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-surface-800 placeholder-surface-500 backdrop-blur-sm"
-                          style={{ fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace' }}
-                        />
-                        <div className="absolute bottom-4 right-4 text-xs text-surface-500">
-                          {inputText.length} characters
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleInputProcess}
-                  disabled={isProcessing}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                >
-                  {isProcessing ? (
-                    <>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      >
-                        <ApperIcon name="Loader2" className="w-5 h-5" />
-                      </motion.div>
-                      <span>Processing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ApperIcon name="Play" className="w-5 h-5" />
-                      <span>Process Request</span>
-                    </>
-                  )}
-                </motion.button>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-8 glass-panel rounded-2xl"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-surface-800">
+                {/* Input Section Tabs */}
+                <div className="glass-panel flex space-x-2 mb-6 p-2">
+                  <button
+                    onClick={() => setInputTab('request')}
+                    className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                      inputTab === 'request' 
+                        ? 'bg-primary-500 text-white shadow-lg' 
+                        : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
+                    }`}
+                  >
+                    Request
+                  </button>
+                  <button
+                    onClick={() => setInputTab('files')}
+                    className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                      inputTab === 'files' 
+                        ? 'bg-primary-500 text-white shadow-lg' 
+                        : 'bg-transparent text-surface-700 hover:bg-white hover:bg-opacity-20'
+                    }`}
+                  >
                     Actual Files
-                  </h3>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2 text-sm text-surface-600">
-                      <ApperIcon name="FileText" className="w-4 h-4" />
-                      <span>Processed files</span>
-                    </div>
-                    {processedFiles && (
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => navigator.clipboard.writeText(processedFiles)}
-                        className="p-2 bg-surface-100 hover:bg-surface-200 rounded-lg transition-colors"
-                        title="Copy to clipboard"
-                      >
-                        <ApperIcon name="Copy" className="w-4 h-4 text-surface-600" />
-                      </motion.button>
-                    )}
-                  </div>
+                  </button>
                 </div>
-                
-                {parsedData ? (
-                  <div className="space-y-6">
-                    {/* Metadata Display */}
-                    <div className="bg-surface-50 rounded-xl border border-surface-200 p-6">
-                      <h4 className="text-lg font-semibold text-surface-800 mb-4">File Information</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-surface-600 mb-1">File Path:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {parsedData.filePath || 'N/A'}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-surface-600 mb-1">File Type:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {parsedData.fileType || 'N/A'}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-surface-600 mb-1">App ID:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {parsedData.appId || 'N/A'}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Error Summary:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {parsedData.syntaxErrorSummary || 'No errors'}
-                          </p>
-                        </div>
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Errors:</label>
-                          <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
-                            {parsedData.syntaxErrors || 'None'}
-                          </p>
-                        </div>
+
+                {/* Input Tab Content */}
+                {inputTab === 'request' ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-8 glass-panel rounded-2xl"
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-surface-800">
+                        Request Input
+                      </h3>
+                      <div className="flex items-center space-x-2 text-sm text-surface-600">
+                        <ApperIcon name="Type" className="w-4 h-4" />
+                        <span>Enter your request</span>
                       </div>
                     </div>
-
-                    {/* Code Editor */}
-                    <div className="bg-surface-50 rounded-xl overflow-hidden border border-surface-200">
-                      <div className="bg-surface-100 px-4 py-2 border-b border-surface-200">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-surface-700">
-                            {parsedData.filePath ? parsedData.filePath.split('/').pop() : 'processed-file'}
-                          </span>
-                          <div className="flex items-center space-x-2 text-xs text-surface-500">
-                            <span>{parsedData.fileType || 'Text'}</span>
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 mb-3">
+                            Request Text
+                          </label>
+                          <div className="relative">
+                            <textarea
+                              value={inputText}
+                              onChange={(e) => setInputText(e.target.value)}
+                              onPaste={(e) => {
+                                // Auto-process after paste with small delay to ensure content is set
+                                setTimeout(() => {
+                                  handleInputProcess()
+                                }, 1000)
+                              }}
+                              placeholder="Enter your request text here..."
+                              className="w-full h-64 p-6 bg-white bg-opacity-50 border border-surface-300 rounded-xl resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-surface-800 placeholder-surface-500 backdrop-blur-sm"
+                              style={{ fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace' }}
+                            />
+                            <div className="absolute bottom-4 right-4 text-xs text-surface-500">
+                              {inputText.length} characters
+                            </div>
                           </div>
                         </div>
                       </div>
-                      <div className="relative">
-                        <Editor
-                          height="400px"
-                          language={getLanguageFromContent(parsedData.cleanedContent || '')}
-                          value={parsedData.cleanedContent || ''}
-                          theme={isDarkMode ? 'vs-dark' : 'vs-light'}
-                          options={{
-                            readOnly: true,
-                            minimap: { enabled: false },
-                            scrollBeyondLastLine: false,
-                            fontSize: 14,
-                            lineHeight: 20,
-                            fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace',
-                            wordWrap: 'on',
-                            lineNumbers: 'on',
-                            folding: true,
-                            automaticLayout: true
-                          }}
-                        />
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleInputProcess}
+                      disabled={isProcessing}
+                      className="w-full py-4 px-6 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    >
+                      {isProcessing ? (
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          >
+                            <ApperIcon name="Loader2" className="w-5 h-5" />
+                          </motion.div>
+                          <span>Processing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <ApperIcon name="Play" className="w-5 h-5" />
+                          <span>Process Request</span>
+                        </>
+                      )}
+                    </motion.button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-8 glass-panel rounded-2xl"
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-surface-800">
+                        Actual Files
+                      </h3>
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 text-sm text-surface-600">
+                          <ApperIcon name="FileText" className="w-4 h-4" />
+                          <span>Processed files</span>
+                        </div>
+                        {processedFiles && (
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => navigator.clipboard.writeText(processedFiles)}
+                            className="p-2 bg-surface-100 hover:bg-surface-200 rounded-lg transition-colors"
+                            title="Copy to clipboard"
+                          >
+                            <ApperIcon name="Copy" className="w-4 h-4 text-surface-600" />
+                          </motion.button>
+                        )}
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="bg-surface-50 rounded-xl border-2 border-dashed border-surface-300 p-12 text-center">
-                    <ApperIcon name="FileText" className="w-12 h-12 text-surface-400 mx-auto mb-4" />
-                    <h4 className="text-lg font-medium text-surface-600 mb-2">No files processed yet</h4>
-                    <p className="text-surface-500">Process a request to see the generated files here.</p>
-                  </div>
+                    
+                    {parsedData ? (
+                      <div className="space-y-6">
+                        {/* Metadata Display */}
+                        <div className="bg-surface-50 rounded-xl border border-surface-200 p-6">
+                          <h4 className="text-lg font-semibold text-surface-800 mb-4">File Information</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-surface-600 mb-1">File Path:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {parsedData.filePath || 'N/A'}
+                              </p>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-surface-600 mb-1">File Type:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {parsedData.fileType || 'N/A'}
+                              </p>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-surface-600 mb-1">App ID:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {parsedData.appId || 'N/A'}
+                              </p>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Error Summary:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {parsedData.syntaxErrorSummary || 'No errors'}
+                              </p>
+                            </div>
+                            <div className="md:col-span-2">
+                              <label className="block text-sm font-medium text-surface-600 mb-1">Syntax Errors:</label>
+                              <p className="text-surface-800 bg-white px-3 py-2 rounded border font-mono text-sm">
+                                {parsedData.syntaxErrors || 'None'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Code Editor */}
+                        <div className="bg-surface-50 rounded-xl overflow-hidden border border-surface-200">
+                          <div className="bg-surface-100 px-4 py-2 border-b border-surface-200">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-surface-700">
+                                {parsedData.filePath ? parsedData.filePath.split('/').pop() : 'processed-file'}
+                              </span>
+                              <div className="flex items-center space-x-2 text-xs text-surface-500">
+                                <span>{parsedData.fileType || 'Text'}</span>
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <Editor
+                              height="400px"
+                              language={getLanguageFromContent(parsedData.cleanedContent || '')}
+                              value={parsedData.cleanedContent || ''}
+                              theme={isDarkMode ? 'vs-dark' : 'vs-light'}
+                              options={{
+                                readOnly: true,
+                                minimap: { enabled: false },
+                                scrollBeyondLastLine: false,
+                                fontSize: 14,
+                                lineHeight: 20,
+                                fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace',
+                                wordWrap: 'on',
+                                lineNumbers: 'on',
+                                folding: true,
+                                automaticLayout: true
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-surface-50 rounded-xl border-2 border-dashed border-surface-300 p-12 text-center">
+                        <ApperIcon name="FileText" className="w-12 h-12 text-surface-400 mx-auto mb-4" />
+                        <h4 className="text-lg font-medium text-surface-600 mb-2">No files processed yet</h4>
+                        <p className="text-surface-500">Process a request to see the generated files here.</p>
+                      </div>
+                    )}
+                  </motion.div>
                 )}
               </motion.div>
             )}
 
-            {/* Changes Tab Content */}
-            <div ref={changesTabRef} className="max-h-screen overflow-y-auto custom-scrollbar">
-              {/* Inner Tab Bar for Changes */}
-              <div className="glass-panel p-2 mb-6">
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => setChangesTab('input')}
-                    className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-                      changesTab === 'input'
-                        ? 'bg-primary-500 text-white shadow-glow'
-                        : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <ApperIcon name="FileText" className="w-4 h-4" />
-                      <span>Streaming Response</span>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => setChangesTab('output')}
-                    className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-                      changesTab === 'output'
-                        ? 'bg-primary-500 text-white shadow-glow'
-                        : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <ApperIcon name="Code2" className="w-4 h-4" />
-                      <span>Actual Response</span>
-                    </div>
-                  </button>
+            {/* Changes Sub-Tab Content */}
+            {errorSubTab === 'changes' && (
+              <motion.div
+                ref={changesTabRef}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-h-screen overflow-y-auto custom-scrollbar"
+              >
+                {/* Inner Tab Bar for Changes */}
+                <div className="glass-panel p-2 mb-6">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => setChangesTab('input')}
+                      className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                        changesTab === 'input'
+                          ? 'bg-primary-500 text-white shadow-glow'
+                          : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <ApperIcon name="FileText" className="w-4 h-4" />
+                        <span>Streaming Response</span>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => setChangesTab('output')}
+                      className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                        changesTab === 'output'
+                          ? 'bg-primary-500 text-white shadow-glow'
+                          : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <ApperIcon name="Code2" className="w-4 h-4" />
+                        <span>Actual Response</span>
+                      </div>
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Input Text Tab */}
-              {changesTab === 'input' && (
-                <div className="glass-panel p-6 sm:p-8">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-                    <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
-                      Streaming Response
-                    </h3>
-                    <div className="flex items-center space-x-4">
-                      <span className="text-sm text-surface-600 dark:text-surface-300">
-                        {text.length} characters
-                      </span>
+                {/* Input Text Tab */}
+                {changesTab === 'input' && (
+                  <div className="glass-panel p-6 sm:p-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
+                        Streaming Response
+                      </h3>
+                      <div className="flex items-center space-x-4">
+                        <span className="text-sm text-surface-600 dark:text-surface-300">
+                          {text.length} characters
+                        </span>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={handleClearAll}
+                          className="px-4 py-2 text-sm bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 rounded-lg transition-colors duration-300"
+                        >
+                          <ApperIcon name="Trash2" className="w-4 h-4" />
+                        </motion.button>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <textarea
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        placeholder="Enter your text here... Try lists, key-value pairs, or any text content!"
+                        className="neu-input w-full h-32 sm:h-40 resize-none focus:outline-none text-surface-900 dark:text-surface-100 dark:bg-surface-800 dark:border-surface-600"
+                        rows={6}
+                      />
+                      
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleClearAll}
-                        className="px-4 py-2 text-sm bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 rounded-lg transition-colors duration-300"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleProcessInput}
+                        disabled={isProcessing || !text.trim()}
+                        className="neu-button w-full sm:w-auto bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition-all duration-300"
                       >
-                        <ApperIcon name="Trash2" className="w-4 h-4" />
+                        <div className="flex items-center justify-center space-x-3">
+                          {isProcessing ? (
+                            <>
+                              <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              >
+                                <ApperIcon name="Loader" className="w-5 h-5" />
+                              </motion.div>
+                              <span>Processing...</span>
+                            </>
+                          ) : (
+                            <>
+                              <ApperIcon name="Play" className="w-5 h-5" />
+                              <span>Get Actual Response</span>
+                            </>
+                          )}
+                        </div>
                       </motion.button>
                     </div>
                   </div>
-                  
-                  <div className="space-y-4">
-                    <textarea
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
-                      placeholder="Enter your text here... Try lists, key-value pairs, or any text content!"
-                      className="neu-input w-full h-32 sm:h-40 resize-none focus:outline-none text-surface-900 dark:text-surface-100 dark:bg-surface-800 dark:border-surface-600"
-                      rows={6}
-                    />
-                    
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleProcessInput}
-                      disabled={isProcessing || !text.trim()}
-                      className="neu-button w-full sm:w-auto bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition-all duration-300"
-                    >
-                      <div className="flex items-center justify-center space-x-3">
-                        {isProcessing ? (
-                          <>
-                            <motion.div
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            >
-                              <ApperIcon name="Loader" className="w-5 h-5" />
-                            </motion.div>
-                            <span>Processing...</span>
-                          </>
-                        ) : (
-                          <>
-                            <ApperIcon name="Play" className="w-5 h-5" />
-                            <span>Get Actual Response</span>
-                          </>
-                        )}
-                      </div>
-                    </motion.button>
-                  </div>
-                </div>
-              )}
+                )}
 
-              {/* Code Output Tab */}
-              {changesTab === 'output' && (
-                <>
-                  {/* Code Editor */}
-                  <CodeEditor
-                    code={processedCode}
-                    onChange={handleCodeChange}
-                    onCopy={handleCopyCode}
-                    language={getLanguageFromContent(processedCode)}
-                    isDarkMode={isDarkMode}
-                  />
-                </>
-              )}
-            </div>
+                {/* Code Output Tab */}
+                {changesTab === 'output' && (
+                  <>
+                    {/* Code Editor */}
+                    <CodeEditor
+                      code={processedCode}
+                      onChange={handleCodeChange}
+                      onCopy={handleCopyCode}
+                      language={getLanguageFromContent(processedCode)}
+                      isDarkMode={isDarkMode}
+                    />
+                  </>
+                )}
+              </motion.div>
+            )}
           </motion.div>
         )}
       </div>
