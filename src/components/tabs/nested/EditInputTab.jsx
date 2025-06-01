@@ -25,40 +25,40 @@ const [inputTab, setInputTab] = useState('request')
     return cleanedLines.join('\n')
   }
 
-  // Parse codebase string to extract individual files
+// Parse codebase string to extract individual files
   const parseCodebase = (codebaseString) => {
     const files = []
-    const lines = codebaseString.split('\n')
-    let currentFile = null
-    let currentContent = []
-
-    for (const line of lines) {
-      if (line.startsWith('FileName:')) {
-        // Save previous file if exists
-        if (currentFile) {
-          files.push({
-            name: currentFile,
-            content: currentContent.join('\n')
-          })
+    
+    // Remove code block markers if present
+    const cleanCodebase = codebaseString.replace(/^```|```$/g, '').trim()
+    
+    // Split by FileName: to get individual file sections
+    const fileSections = cleanCodebase.split(/(?=FileName:)/).filter(section => section.trim())
+    
+    for (const section of fileSections) {
+      const lines = section.split('\n')
+      let fileName = null
+      const fileContent = []
+      
+      for (const line of lines) {
+        if (line.startsWith('FileName:')) {
+          fileName = line.replace('FileName:', '').trim()
+        } else if (line.startsWith('LineNumber:')) {
+          // Extract content after LineNumber:X: (split at second colon)
+          const colonIndex = line.indexOf(':', line.indexOf(':') + 1)
+          const content = colonIndex !== -1 ? line.substring(colonIndex + 1) : ''
+          fileContent.push(content)
         }
-        // Start new file
-        currentFile = line.replace('FileName:', '')
-        currentContent = []
-      } else if (line.startsWith('LineNumber:')) {
-        // Extract content after LineNumber:X:
-        const match = line.match(/^LineNumber:\d+:(.*)$/)
-        currentContent.push(match ? match[1] : '')
+      }
+      
+      if (fileName && fileContent.length > 0) {
+        files.push({
+          name: fileName,
+          content: fileContent.join('\n')
+        })
       }
     }
-
-    // Save last file
-    if (currentFile) {
-      files.push({
-        name: currentFile,
-        content: currentContent.join('\n')
-      })
-    }
-
+    
     return files
   }
 const handleInputProcess = async () => {
