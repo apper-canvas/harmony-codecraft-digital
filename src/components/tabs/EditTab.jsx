@@ -21,11 +21,11 @@ const EditTab = ({
   setActiveSubTab
 }) => {
 const editTab = activeSubTab
+  const [editOutputTab, setEditOutputTab] = useState('input')
   
   const handleTabChange = (tab) => {
     setActiveSubTab(tab)
   }
-
   const clearAll = () => {
     setInputText('')
     setParsedData(null)
