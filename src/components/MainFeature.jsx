@@ -317,11 +317,11 @@ return (
 <textarea
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
-                        onPaste={(e) => {
+onPaste={(e) => {
                           // Auto-process after paste with small delay to ensure content is set
                           setTimeout(() => {
                             handleInputProcess()
-                          }, 200)
+                          }, 1000)
                         }}
                         placeholder="Enter your request text here..."
                         className="w-full h-64 p-6 bg-white bg-opacity-50 border border-surface-300 rounded-xl resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-surface-800 placeholder-surface-500 backdrop-blur-sm"
