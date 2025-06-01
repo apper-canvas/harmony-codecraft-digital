@@ -12,7 +12,8 @@ const EditInputTab = ({
   codebaseFiles, 
   setCodebaseFiles, 
   activeFileTab, 
-  setActiveFileTab 
+  setActiveFileTab,
+  clearAll
 }) => {
 const [inputTab, setInputTab] = useState('request')
   const [processedFiles, setProcessedFiles] = useState('')
