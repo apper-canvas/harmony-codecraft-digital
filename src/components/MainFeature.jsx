@@ -263,7 +263,7 @@ className="space-y-8"
           className="mt-8"
 >
           {/* Input Section Tabs */}
-          <div className="floating-tabs flex space-x-2 mb-6 p-1">
+          <div className="glass-panel flex space-x-2 mb-6 p-2">
             <button
               onClick={() => setInputTab('request')}
               className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
@@ -467,7 +467,7 @@ className="space-y-8"
       {activeTab === 'changes' && (
 <>
           {/* Inner Tab Bar for Changes */}
-          <div className="floating-tabs p-2">
+          <div className="glass-panel p-2 mb-6">
             <div className="flex space-x-2">
               <button
                 onClick={() => setChangesTab('input')}
