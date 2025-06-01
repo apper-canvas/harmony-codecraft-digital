@@ -221,13 +221,13 @@ return (
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.3 }}
-      className="space-y-8"
-    >
+className="space-y-8"
+  >
 {/* Tab Bar */}
-      <div className="glass-panel p-2">
-        <div className="flex space-x-2">
-          <button
-            onClick={() => setActiveTab('input')}
+    <div className="floating-tabs p-2">
+      <div className="flex space-x-2">
+        <button
+          onClick={() => setActiveTab('input')}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
               activeTab === 'input'
                 ? 'bg-primary-500 text-white shadow-glow'
