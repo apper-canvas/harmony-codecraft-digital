@@ -4,13 +4,18 @@ import { toast } from 'react-toastify'
 import { Editor } from '@monaco-editor/react'
 import ApperIcon from '../../ApperIcon'
 
-const EditInputTab = () => {
-const [inputTab, setInputTab] = useState('request')
-  const [inputText, setInputText] = useState('')
+const EditInputTab = ({ 
+  inputText, 
+  setInputText, 
+  parsedData, 
+  setParsedData, 
+  codebaseFiles, 
+  setCodebaseFiles, 
+  activeFileTab, 
+  setActiveFileTab 
+}) => {
+  const [inputTab, setInputTab] = useState('request')
   const [processedFiles, setProcessedFiles] = useState('')
-  const [parsedData, setParsedData] = useState(null)
-  const [codebaseFiles, setCodebaseFiles] = useState([])
-  const [activeFileTab, setActiveFileTab] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
   
   const inputTabRef = useRef(null)

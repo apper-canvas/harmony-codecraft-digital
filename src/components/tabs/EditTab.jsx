@@ -79,9 +79,9 @@ const EditTab = ({
         />
       )}
       {editTab === 'changes' && (
-        <EditChangesTab 
+<EditChangesTab 
           text={changesText}
-setText={setChangesText}
+          setText={setChangesText}
           processedCode={processedCode}
           setProcessedCode={setProcessedCode}
         />

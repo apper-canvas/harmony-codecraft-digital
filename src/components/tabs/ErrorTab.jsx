@@ -62,7 +62,7 @@ const ErrorTab = ({
       </div>
 
       {/* Tab Content */}
-      {errorTab === 'input' && (
+{errorTab === 'input' && (
         <ErrorInputTab 
           inputText={inputText}
           setInputText={setInputText}
@@ -76,7 +76,7 @@ const ErrorTab = ({
           setText={setChangesText}
           processedCode={processedCode}
           setProcessedCode={setProcessedCode}
-/>
+        />
       )}
     </motion.div>
   )
