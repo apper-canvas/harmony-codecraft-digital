@@ -32,14 +32,14 @@ const inputTabRef = useRef(null)
     }
   }, [isActive])
 
-  // Restore scroll position when component becomes active
+// Restore scroll position when component mounts
   useEffect(() => {
-    if (isActive && inputTabRef.current && scrollPosition > 0) {
+    if (inputTabRef.current && scrollPosition > 0) {
       setTimeout(() => {
         inputTabRef.current.scrollTop = scrollPosition
       }, 100)
     }
-  }, [isActive, scrollPosition])
+  }, [scrollPosition])
 
   // Helper function to process codebase files
   const processFileContent = (fileContent) => {
