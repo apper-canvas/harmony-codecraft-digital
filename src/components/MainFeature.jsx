@@ -248,26 +248,47 @@ const codeEditorRef = useRef(null)
           </div>
         </div>
 
-        <div className="neu-input p-0 overflow-hidden bg-surface-50 dark:bg-surface-800">
+<div className="neu-input p-0 overflow-hidden bg-surface-50 dark:bg-surface-800">
           {processedCode ? (
             <div className="flex min-h-96">
               {editorSettings.showLineNumbers && (
-                <div className="line-numbers py-4 min-w-16 dark:bg-surface-900 dark:border-surface-700">
+                <div className="line-numbers-editable py-4 min-w-16">
                   {lineNumbers.map(num => (
-                    <div key={num} className="h-6 flex items-center justify-end pr-4">
-                      {num}
+                    <div key={num} className="h-6 flex items-center justify-end pr-2">
+                      {editorSettings.enableFolding && (
+                        <span 
+                          className="fold-indicator"
+                          onClick={() => toggleCodeBlock(num - 1)}
+                        >
+                          {collapsedBlocks.has(num - 1) ? '▶' : '▼'}
+                        </span>
+                      )}
+                      <span className="pr-2">{num}</span>
                     </div>
                   ))}
                 </div>
               )}
               <div 
                 ref={codeEditorRef}
-                className="flex-1 p-4 code-editor custom-scrollbar overflow-auto"
+                className="flex-1 p-4 custom-scrollbar overflow-auto"
                 style={{ fontSize: `${editorSettings.fontSize}px` }}
               >
-                <pre className="whitespace-pre-wrap text-surface-900 dark:text-surface-100">
-                  {processedCode}
-                </pre>
+                {isEditing ? (
+                  <textarea
+                    value={processedCode}
+                    onChange={(e) => handleCodeChange(e.target.value)}
+                    className="code-editor-editable w-full min-h-96 text-surface-900 dark:text-surface-100 dark:bg-surface-800"
+                    style={{ fontSize: `${editorSettings.fontSize}px` }}
+                    spellCheck={false}
+                  />
+                ) : (
+                  <pre 
+                    className="whitespace-pre-wrap text-surface-900 dark:text-surface-100 code-editor"
+                    dangerouslySetInnerHTML={{ 
+                      __html: highlightSyntax(processedCode)
+                    }}
+                  />
+                )}
               </div>
             </div>
           ) : (

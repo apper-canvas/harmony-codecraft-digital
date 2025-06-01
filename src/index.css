@@ -24,15 +24,39 @@
     @apply font-mono text-sm leading-relaxed;
   }
   
+  .code-editor-editable {
+    @apply font-mono text-sm leading-relaxed resize-none border-none outline-none bg-transparent;
+  }
+  
   .line-numbers {
     @apply select-none text-surface-400 text-right pr-4 border-r border-surface-200 bg-surface-50;
   }
   
-  .syntax-html {
-    @apply text-primary-600;
+  .line-numbers-editable {
+    @apply select-none text-surface-400 text-right pr-4 border-r border-surface-200 bg-surface-50 dark:bg-surface-900 dark:border-surface-700;
   }
   
-  .syntax-js {
+  .syntax-html-tag {
+    @apply text-primary-600 font-medium;
+  }
+  
+  .syntax-html-attr {
+    @apply text-primary-500;
+  }
+  
+  .syntax-js-keyword {
+    @apply text-purple-600 font-medium;
+  }
+  
+  .syntax-js-function {
+    @apply text-blue-600 font-medium;
+  }
+  
+  .syntax-jsx-component {
+    @apply text-primary-700 font-medium;
+  }
+  
+  .syntax-jsx-prop {
     @apply text-secondary-600;
   }
   
@@ -50,6 +74,26 @@
   
   .syntax-comment {
     @apply text-surface-500 italic;
+  }
+  
+  .syntax-bracket {
+    @apply text-surface-700 font-bold;
+  }
+  
+  .bracket-match {
+    @apply bg-primary-100 dark:bg-primary-900 rounded px-1;
+  }
+  
+  .code-block-collapsible {
+    @apply cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800 rounded px-1 transition-colors;
+  }
+  
+  .code-block-collapsed {
+    @apply text-surface-400 italic;
+  }
+  
+  .fold-indicator {
+    @apply text-surface-400 hover:text-surface-600 cursor-pointer select-none mr-2;
   }
   
   .neu-button {
