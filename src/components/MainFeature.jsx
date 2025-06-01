@@ -392,11 +392,12 @@ const handleCopyCode = () => {
 .replace(/\/\/(.*?)$/gm, '<span class="syntax-comment">//$1</span>')
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Tab Content */}
+return (
+    <>
+      <div className="space-y-6">
+        {/* Tab Content */}
 
-{/* Edit Tab Content */}
+        {/* Edit Tab Content */}
         {activeTab === 'edit' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -770,7 +771,7 @@ const handleCopyCode = () => {
           </motion.div>
         )}
 
-{/* Error Tab Content */}
+        {/* Error Tab Content */}
         {activeTab === 'error' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -991,7 +992,7 @@ const handleCopyCode = () => {
                               </div>
                             </div>
                           </div>
-<div className="relative">
+                          <div className="relative">
                             <CodeEditor
                               code={parsedData.cleanedContent || ''}
                               onChange={() => {}}
@@ -1132,9 +1133,10 @@ const handleCopyCode = () => {
               </motion.div>
             )}
           </motion.div>
-)}
+        )}
       </div>
-    )
-  }
+    </>
+  )
+}
 
 export default MainFeature
