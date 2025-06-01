@@ -309,13 +309,19 @@ return (
                 
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 mb-3">
-                      Request Text
-                    </label>
-                    <div className="relative">
-                      <textarea
+<div>
+                      <label className="block text-sm font-medium text-surface-700 mb-3">
+                        Request Text
+                      </label>
+                      <div className="relative">
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
+                        onPaste={(e) => {
+                          // Auto-process after paste with small delay to ensure content is set
+                          setTimeout(() => {
+                            handleInputProcess()
+                          }, 100)
+                        }}
                         placeholder="Enter your request text here..."
                         className="w-full h-64 p-6 bg-white bg-opacity-50 border border-surface-300 rounded-xl resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-surface-800 placeholder-surface-500 backdrop-blur-sm"
                         style={{ fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace' }}
@@ -323,8 +329,6 @@ return (
                       <div className="absolute bottom-4 right-4 text-xs text-surface-500">
                         {inputText.length} characters
                       </div>
-                    </div>
-                  </div>
                   
                   <motion.button
                     whileHover={{ scale: 1.02 }}
