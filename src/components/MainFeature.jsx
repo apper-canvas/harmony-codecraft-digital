@@ -138,8 +138,8 @@ const handleInputProcess = async () => {
   const [collapsedBlocks, setCollapsedBlocks] = useState(new Set())
   const codeEditorRef = useRef(null)
 
-  const handleProcessInput = async () => {
-    if (!inputText.trim()) {
+const handleProcessInput = async () => {
+    if (!text.trim()) {
       toast.error('Please enter some text to transform')
       return
     }
@@ -149,12 +149,12 @@ const handleInputProcess = async () => {
     // Simulate processing delay
 await new Promise(resolve => setTimeout(resolve, 1500))
     
-    const extractedText = extractAllTextValues(inputText)
+    const extractedText = extractAllTextValues(text)
     setProcessedCode(extractedText || "No valid text found")
     setProcessingStats({
-      lineCount: (extractedText || inputText).split('\n').length,
+      lineCount: (extractedText || text).split('\n').length,
       processingTime: 1500,
-      codeType: getLanguageFromContent(extractedText || inputText)
+      codeType: getLanguageFromContent(extractedText || text)
     })
     
     setIsProcessing(false)
