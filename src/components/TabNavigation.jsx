@@ -7,10 +7,10 @@ function TabNavigation({ activeTab, setActiveTab, saveScrollPosition }) {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.3 }}
-    >
+>
       {/* Tab Bar */}
       <div className="floating-tabs p-2">
-        <div className="flex space-x-2">
+        <div className="flex justify-center space-x-2">
 <button
             onClick={() => {
               saveScrollPosition(activeTab)
