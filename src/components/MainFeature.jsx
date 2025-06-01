@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
 import { Editor } from '@monaco-editor/react'
 import ApperIcon from './ApperIcon'
+import CodeEditor from './CodeEditor'
 
 function MainFeature() {
 const [activeTab, setActiveTab] = useState('input')
