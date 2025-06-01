@@ -1,26 +1,62 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { toast } from 'react-toastify'
 import ApperIcon from '../ApperIcon'
+import CodeEditor from '../CodeEditor'
 import EditInputTab from './nested/EditInputTab'
-import EditChangesTab from './nested/EditChangesTab'
-
 const EditTab = ({ 
   inputText, 
   setInputText, 
-  parsedData, 
-  setParsedData, 
-  codebaseFiles, 
-  setCodebaseFiles, 
-  activeFileTab, 
+  parsedData,
+  setParsedData,
+  codebaseFiles,
+  setCodebaseFiles,
+  activeFileTab,
   setActiveFileTab,
   changesText,
   setChangesText,
-  processedCode,
   setProcessedCode,
   activeSubTab,
   setActiveSubTab
 }) => {
-const editTab = activeSubTab
+  const [inputCode, setInputCode] = React.useState('')
+  const [outputCode, setOutputCode] = React.useState('')
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [isDarkMode, setIsDarkMode] = React.useState(false)
+  const [editorSettings, setEditorSettings] = useState({ 
+    showLineNumbers: false, 
+    enableFolding: true, 
+    fontSize: 14, 
+    showErrors: false 
+  })
+
+  // Load settings from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedSettings = localStorage.getItem('editTabEditorSettings')
+      if (savedSettings) {
+        const parsed = JSON.parse(savedSettings)
+        setEditorSettings(prev => ({ ...prev, ...parsed }))
+      }
+    } catch (error) {
+      console.warn('Failed to load editor settings from localStorage:', error)
+    }
+  }, [])
+
+  // Save settings to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('editTabEditorSettings', JSON.stringify({
+        showLineNumbers: editorSettings.showLineNumbers,
+        fontSize: editorSettings.fontSize
+      }))
+    } catch (error) {
+      console.warn('Failed to save editor settings to localStorage:', error)
+    }
+  }, [editorSettings.showLineNumbers, editorSettings.fontSize])
+}, [editorSettings.showLineNumbers, editorSettings.fontSize])
+  
+  // Handle file input
   const [editOutputTab, setEditOutputTab] = useState('input')
   const [editInputTab, setEditInputTab] = useState('request')
   
@@ -97,13 +133,15 @@ const editTab = activeSubTab
 <EditChangesTab 
           text={changesText}
           setText={setChangesText}
-          processedCode={processedCode}
-          setProcessedCode={setProcessedCode}
-          isActive={editTab === 'changes'}
-          changesTab={editOutputTab}
-          setChangesTab={setEditOutputTab}
-          editorSettings={editorSettings}
-          setEditorSettings={setEditorSettings}
+          options={{
+                fontSize: editorSettings.fontSize,
+                lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
+                folding: editorSettings.enableFolding,
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+wordWrap: 'on',
+              }}
         />
       )}
     </motion.div>
