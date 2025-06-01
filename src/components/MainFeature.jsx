@@ -209,9 +209,9 @@ return (
                     : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
                 }`}
               >
-                <div className="flex items-center space-x-2">
+<div className="flex items-center space-x-2">
                   <ApperIcon name="FileText" className="w-4 h-4" />
-                  <span>Input Text</span>
+                  <span>Streaming Response</span>
                 </div>
               </button>
               <button
@@ -222,9 +222,9 @@ return (
                     : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
                 }`}
               >
-                <div className="flex items-center space-x-2">
+<div className="flex items-center space-x-2">
                   <ApperIcon name="Code2" className="w-4 h-4" />
-                  <span>Code Output</span>
+                  <span>Actual Response</span>
                 </div>
               </button>
             </div>
@@ -233,9 +233,9 @@ return (
           {/* Input Text Tab */}
           {changesTab === 'input' && (
             <div className="glass-panel p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
           <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
-            Input Text
+            Streaming Response
           </h3>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-surface-600 dark:text-surface-300">
@@ -280,9 +280,9 @@ return (
                   <span>Processing...</span>
                 </>
 ) : (
-                <>
+<>
                   <ApperIcon name="Play" className="w-5 h-5" />
-                  <span>Transform to Code</span>
+                  <span>Get Actual Response</span>
                 </>
               )}
             </div>
@@ -344,9 +344,9 @@ return (
 
               {/* Code Editor */}
               <div className="glass-panel p-6 sm:p-8">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
                   <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
-            Code Output
+            Actual Response
           </h3>
 <div className="flex items-center space-x-4">
             <label className="flex items-center space-x-2 text-sm">
@@ -444,9 +444,9 @@ options={{
                 </motion.div>
                 <p className="text-surface-500 dark:text-surface-400 text-lg">
                   Your transformed code will appear here
-                </p>
+</p>
                 <p className="text-surface-400 dark:text-surface-500 text-sm mt-2">
-                  Enter some text above and click "Transform to Code"
+                  Enter some text above and click "Get Actual Response"
                 </p>
               </div>
             </div>
