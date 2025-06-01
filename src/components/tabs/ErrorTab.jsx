@@ -68,6 +68,7 @@ const ErrorTab = ({
           setInputText={setInputText}
           parsedData={parsedData}
           setParsedData={setParsedData}
+          clearAll={clearAll}
         />
       )}
 {errorTab === 'changes' && (
