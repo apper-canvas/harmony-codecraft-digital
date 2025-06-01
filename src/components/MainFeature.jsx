@@ -95,7 +95,7 @@ const codeEditorRef = useRef(null)
     // Handle case where no valid text is found
     const finalOutput = extractedText || "No valid text found"
     
-    setProcessedCode(finalOutput)
+setProcessedCode(finalOutput)
     setProcessingStats({
       lineCount: finalOutput.split('\n').length,
       processingTime: processingTime,
@@ -103,6 +103,7 @@ const codeEditorRef = useRef(null)
     })
     
     setIsProcessing(false)
+    setChangesTab('output')
     
     if (extractedText) {
       toast.success('Successfully extracted text content!')
