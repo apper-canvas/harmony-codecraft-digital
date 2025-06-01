@@ -5,14 +5,16 @@ import { Editor } from '@monaco-editor/react'
 import ApperIcon from './ApperIcon'
 
 function MainFeature() {
-  const [inputText, setInputText] = useState('')
+const [inputText, setInputText] = useState('')
   const [processedCode, setProcessedCode] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [activeTab, setActiveTab] = useState('input')
 const [editorSettings, setEditorSettings] = useState({
     showLineNumbers: true,
     theme: 'light',
     fontSize: 14,
-    enableFolding: true
+    enableFolding: true,
+    showErrors: false
   })
 const [processingStats, setProcessingStats] = useState({
     lineCount: 0,
@@ -153,70 +155,267 @@ const codeEditorRef = useRef(null)
       .replace(/\/\/(.*?)$/gm, '<span class="syntax-comment">//$1</span>')
   }
 
-  return (
+return (
     <motion.div 
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.3 }}
       className="space-y-8"
     >
-      {/* Input Section */}
+      {/* Tab Bar and Content */}
       <div className="glass-panel p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
-            Input Text
-          </h3>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-surface-600 dark:text-surface-300">
-              {inputText.length} characters
-            </span>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleClearAll}
-              className="px-4 py-2 text-sm bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 rounded-lg transition-colors duration-300"
-            >
-              <ApperIcon name="Trash2" className="w-4 h-4" />
-            </motion.button>
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          <textarea
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="Enter your text here... Try lists, key-value pairs, or any text content!"
-            className="neu-input w-full h-32 sm:h-40 resize-none focus:outline-none text-surface-900 dark:text-surface-100 dark:bg-surface-800 dark:border-surface-600"
-            rows={6}
-          />
-          
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleProcess}
-            disabled={isProcessing || !inputText.trim()}
-            className="neu-button w-full sm:w-auto bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition-all duration-300"
+        {/* Tab Bar */}
+        <div className="flex space-x-1 mb-6 bg-surface-100 dark:bg-surface-800 p-1 rounded-xl">
+          <button
+            onClick={() => setActiveTab('input')}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+              activeTab === 'input'
+                ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-sm'
+                : 'text-surface-600 dark:text-surface-300 hover:text-surface-800 dark:hover:text-surface-100'
+            }`}
           >
-            <div className="flex items-center justify-center space-x-3">
-              {isProcessing ? (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
-                    <ApperIcon name="Loader" className="w-5 h-5" />
-                  </motion.div>
-                  <span>Processing...</span>
-                </>
-              ) : (
-                <>
-                  <ApperIcon name="Play" className="w-5 h-5" />
-                  <span>Transform to Code</span>
-                </>
-              )}
+            <div className="flex items-center justify-center space-x-2">
+              <ApperIcon name="Edit3" className="w-4 h-4" />
+              <span>Input</span>
             </div>
-          </motion.button>
+          </button>
+          <button
+            onClick={() => setActiveTab('output')}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+              activeTab === 'output'
+                ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-sm'
+                : 'text-surface-600 dark:text-surface-300 hover:text-surface-800 dark:hover:text-surface-100'
+            }`}
+          >
+            <div className="flex items-center justify-center space-x-2">
+              <ApperIcon name="Code2" className="w-4 h-4" />
+              <span>Output</span>
+            </div>
+          </button>
         </div>
+
+        {/* Tab Content */}
+        <AnimatePresence mode="wait">
+          {activeTab === 'input' && (
+            <motion.div
+              key="input"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
+                  Input Text
+                </h3>
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-surface-600 dark:text-surface-300">
+                    {inputText.length} characters
+                  </span>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleClearAll}
+                    className="px-4 py-2 text-sm bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 rounded-lg transition-colors duration-300"
+                  >
+                    <ApperIcon name="Trash2" className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="neu-input p-0 overflow-hidden bg-surface-50 dark:bg-surface-800 rounded-xl">
+                  <Editor
+                    height="300px"
+                    language="plaintext"
+                    value={inputText}
+                    onChange={(value) => setInputText(value || '')}
+                    theme={isDarkMode ? 'vs-dark' : 'light'}
+                    options={{
+                      fontSize: editorSettings.fontSize,
+                      lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
+                      minimap: { enabled: false },
+                      scrollBeyondLastLine: false,
+                      automaticLayout: true,
+                      wordWrap: 'on',
+                      readOnly: false,
+                      selectOnLineNumbers: true,
+                      glyphMargin: false,
+                      lineDecorationsWidth: 0,
+                      lineNumbersMinChars: 3,
+                      renderLineHighlight: 'line',
+                      scrollbar: {
+                        vertical: 'auto',
+                        horizontal: 'auto',
+                        useShadows: false,
+                        verticalScrollbarSize: 8,
+                        horizontalScrollbarSize: 8
+                      },
+                      validate: false,
+                      renderValidationDecorations: 'off'
+                    }}
+                    loading={
+                      <div className="flex items-center justify-center h-72">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                          <ApperIcon name="Loader" className="w-8 h-8 text-primary-500" />
+                        </motion.div>
+                      </div>
+                    }
+                  />
+                </div>
+                
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleProcess}
+                  disabled={isProcessing || !inputText.trim()}
+                  className="neu-button w-full sm:w-auto bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition-all duration-300"
+                >
+                  <div className="flex items-center justify-center space-x-3">
+                    {isProcessing ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                          <ApperIcon name="Loader" className="w-5 h-5" />
+                        </motion.div>
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ApperIcon name="Play" className="w-5 h-5" />
+                        <span>Transform to Code</span>
+                      </>
+                    )}
+                  </div>
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'output' && (
+            <motion.div
+              key="output"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
+                  Code Output
+                </h3>
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center space-x-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={editorSettings.showLineNumbers}
+                      onChange={(e) => setEditorSettings(prev => ({ ...prev, showLineNumbers: e.target.checked }))}
+                      className="rounded border-surface-300"
+                    />
+                    <span className="text-surface-600 dark:text-surface-300">Line Numbers</span>
+                  </label>
+                  <label className="flex items-center space-x-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={editorSettings.enableFolding}
+                      onChange={(e) => setEditorSettings(prev => ({ ...prev, enableFolding: e.target.checked }))}
+                      className="rounded border-surface-300"
+                    />
+                    <span className="text-surface-600 dark:text-surface-300">Code Folding</span>
+                  </label>
+                  <select
+                    value={editorSettings.fontSize}
+                    onChange={(e) => setEditorSettings(prev => ({ ...prev, fontSize: parseInt(e.target.value) }))}
+                    className="px-3 py-1 text-sm bg-surface-100 dark:bg-surface-800 border border-surface-300 dark:border-surface-600 rounded-lg"
+                  >
+                    <option value={12}>12px</option>
+                    <option value={14}>14px</option>
+                    <option value={16}>16px</option>
+                    <option value={18}>18px</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="neu-input p-0 overflow-hidden bg-surface-50 dark:bg-surface-800 rounded-xl">
+                {processedCode ? (
+                  <div className="min-h-96">
+                    <Editor
+                      height="400px"
+                      language={getLanguageFromContent(processedCode)}
+                      value={processedCode}
+                      onChange={(value) => handleCodeChange(value || '')}
+                      onMount={handleEditorDidMount}
+                      theme={isDarkMode ? 'vs-dark' : 'light'}
+                      options={{
+                        fontSize: editorSettings.fontSize,
+                        lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
+                        folding: editorSettings.enableFolding,
+                        minimap: { enabled: false },
+                        scrollBeyondLastLine: false,
+                        automaticLayout: true,
+                        wordWrap: 'on',
+                        readOnly: false,
+                        selectOnLineNumbers: true,
+                        glyphMargin: false,
+                        lineDecorationsWidth: 0,
+                        lineNumbersMinChars: 3,
+                        renderLineHighlight: 'line',
+                        scrollbar: {
+                          vertical: 'auto',
+                          horizontal: 'auto',
+                          useShadows: false,
+                          verticalScrollbarSize: 8,
+                          horizontalScrollbarSize: 8
+                        },
+                        bracketPairColorization: {
+                          enabled: true
+                        },
+                        guides: {
+                          bracketPairs: true,
+                          indentation: true
+                        },
+                        validate: editorSettings.showErrors,
+                        renderValidationDecorations: editorSettings.showErrors ? 'on' : 'off'
+                      }}
+                      loading={
+                        <div className="flex items-center justify-center h-96">
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          >
+                            <ApperIcon name="Loader" className="w-8 h-8 text-primary-500" />
+                          </motion.div>
+                        </div>
+                      }
+                    />
+                  </div>
+                ) : (
+                  <div className="min-h-96 flex items-center justify-center">
+                    <div className="text-center">
+                      <motion.div
+                        animate={{ rotate: [0, 5, -5, 0] }}
+                        transition={{ duration: 4, repeat: Infinity }}
+                      >
+                        <ApperIcon name="Code2" className="w-16 h-16 text-surface-400 mx-auto mb-4" />
+                      </motion.div>
+                      <p className="text-surface-500 dark:text-surface-400 text-lg">
+                        Your transformed code will appear here
+                      </p>
+                      <p className="text-surface-400 dark:text-surface-500 text-sm mt-2">
+                        Enter some text in the Input tab and click "Transform to Code"
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Processing Stats */}
@@ -266,119 +465,8 @@ const codeEditorRef = useRef(null)
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+</AnimatePresence>
 
-      {/* Code Editor */}
-      <div className="glass-panel p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
-            Code Output
-          </h3>
-<div className="flex items-center space-x-4">
-            <label className="flex items-center space-x-2 text-sm">
-              <input
-                type="checkbox"
-                checked={editorSettings.showLineNumbers}
-                onChange={(e) => setEditorSettings(prev => ({ ...prev, showLineNumbers: e.target.checked }))}
-                className="rounded border-surface-300"
-              />
-              <span className="text-surface-600 dark:text-surface-300">Line Numbers</span>
-            </label>
-            <label className="flex items-center space-x-2 text-sm">
-              <input
-                type="checkbox"
-                checked={editorSettings.enableFolding}
-                onChange={(e) => setEditorSettings(prev => ({ ...prev, enableFolding: e.target.checked }))}
-                className="rounded border-surface-300"
-/>
-              <span className="text-surface-600 dark:text-surface-300">Code Folding</span>
-            </label>
-            <select
-              value={editorSettings.fontSize}
-              onChange={(e) => setEditorSettings(prev => ({ ...prev, fontSize: parseInt(e.target.value) }))}
-              className="px-3 py-1 text-sm bg-surface-100 dark:bg-surface-800 border border-surface-300 dark:border-surface-600 rounded-lg"
-            >
-              <option value={12}>12px</option>
-              <option value={14}>14px</option>
-              <option value={16}>16px</option>
-              <option value={18}>18px</option>
-            </select>
-          </div>
-        </div>
-
-<div className="neu-input p-0 overflow-hidden bg-surface-50 dark:bg-surface-800 rounded-xl">
-          {processedCode ? (
-            <div className="min-h-96">
-              <Editor
-                height="400px"
-                language={getLanguageFromContent(processedCode)}
-                value={processedCode}
-                onChange={(value) => handleCodeChange(value || '')}
-                onMount={handleEditorDidMount}
-                theme={isDarkMode ? 'vs-dark' : 'light'}
-options={{
-                  fontSize: editorSettings.fontSize,
-                  lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
-                  folding: editorSettings.enableFolding,
-                  minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  automaticLayout: true,
-                  wordWrap: 'on',
-                  readOnly: false,
-                  selectOnLineNumbers: true,
-                  glyphMargin: false,
-                  lineDecorationsWidth: 0,
-                  lineNumbersMinChars: 3,
-                  renderLineHighlight: 'line',
-                  scrollbar: {
-                    vertical: 'auto',
-                    horizontal: 'auto',
-                    useShadows: false,
-                    verticalScrollbarSize: 8,
-                    horizontalScrollbarSize: 8
-                  },
-                  bracketPairColorization: {
-                    enabled: true
-                  },
-                  guides: {
-                    bracketPairs: true,
-                    indentation: true
-                  },
-                  validate: editorSettings.showErrors,
-                  renderValidationDecorations: editorSettings.showErrors ? 'on' : 'off'
-                }}
-                loading={
-                  <div className="flex items-center justify-center h-96">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    >
-                      <ApperIcon name="Loader" className="w-8 h-8 text-primary-500" />
-                    </motion.div>
-                  </div>
-                }
-              />
-            </div>
-          ) : (
-            <div className="min-h-96 flex items-center justify-center">
-              <div className="text-center">
-                <motion.div
-                  animate={{ rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 4, repeat: Infinity }}
-                >
-                  <ApperIcon name="Code2" className="w-16 h-16 text-surface-400 mx-auto mb-4" />
-                </motion.div>
-                <p className="text-surface-500 dark:text-surface-400 text-lg">
-                  Your transformed code will appear here
-                </p>
-                <p className="text-surface-400 dark:text-surface-500 text-sm mt-2">
-                  Enter some text above and click "Transform to Code"
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
     </motion.div>
   )
 }
