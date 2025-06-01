@@ -31,23 +31,29 @@ setEditorSettings = () => {}
           Actual Response
 </h3>
         <div className="flex items-center space-x-4">
-          <label className="flex items-center space-x-2 text-sm cursor-pointer">
+          <label className="flex items-center space-x-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
             <input
               type="checkbox"
               checked={editorSettings.showLineNumbers}
-              onChange={(e) => setEditorSettings(prev => ({ ...prev, showLineNumbers: e.target.checked }))}
-              className="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer"
+              onChange={(e) => {
+                e.stopPropagation();
+                setEditorSettings(prev => ({ ...prev, showLineNumbers: e.target.checked }));
+              }}
+              className="w-4 h-4 rounded border-2 border-surface-300 text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer hover:border-primary-400 transition-colors"
             />
-            <span className="text-surface-600 dark:text-surface-300 select-none">Line Numbers</span>
-          </label>
-<label className="flex items-center space-x-2 text-sm cursor-pointer">
+            <span className="text-surface-600 dark:text-surface-300 select-none pointer-events-none">Line Numbers</span>
+</label>
+          <label className="flex items-center space-x-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
             <input
               type="checkbox"
               checked={editorSettings.enableFolding}
-              onChange={(e) => setEditorSettings(prev => ({ ...prev, enableFolding: e.target.checked }))}
-              className="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer"
+              onChange={(e) => {
+                e.stopPropagation();
+                setEditorSettings(prev => ({ ...prev, enableFolding: e.target.checked }));
+              }}
+              className="w-4 h-4 rounded border-2 border-surface-300 text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer hover:border-primary-400 transition-colors"
             />
-            <span className="text-surface-600 dark:text-surface-300 select-none">Code Folding</span>
+            <span className="text-surface-600 dark:text-surface-300 select-none pointer-events-none">Code Folding</span>
           </label>
           <select
             value={editorSettings.fontSize}
