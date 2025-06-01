@@ -85,6 +85,8 @@ const errorTab = activeSubTab
           processedCode={processedCode}
           setProcessedCode={setProcessedCode}
           isActive={errorTab === 'changes'}
+          changesTab={errorOutputTab}
+          setChangesTab={setErrorOutputTab}
         />
       )}
     </motion.div>

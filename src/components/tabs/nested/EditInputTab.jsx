@@ -15,8 +15,7 @@ setActiveFileTab,
   clearAll,
   isActive
 }) => {
-  const [inputTab, setInputTab] = useState('request')
-  const [processedFiles, setProcessedFiles] = useState('')
+const [processedFiles, setProcessedFiles] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [scrollPosition, setScrollPosition] = useState(0)
   

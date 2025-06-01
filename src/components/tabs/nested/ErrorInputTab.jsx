@@ -5,8 +5,7 @@ import ApperIcon from '../../ApperIcon'
 import CodeEditor from '../../CodeEditor'
 
 const ErrorInputTab = ({ inputText, setInputText, parsedData, setParsedData, clearAll, isActive }) => {
-  const [inputTab, setInputTab] = useState('request')
-  const [processedFiles, setProcessedFiles] = useState('')
+const [processedFiles, setProcessedFiles] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [scrollPosition, setScrollPosition] = useState(0)
   

@@ -88,13 +88,15 @@ const editTab = activeSubTab
           isActive={editTab === 'input'}
         />
       )}
-      {editTab === 'changes' && (
+{editTab === 'changes' && (
 <EditChangesTab 
           text={changesText}
           setText={setChangesText}
           processedCode={processedCode}
           setProcessedCode={setProcessedCode}
           isActive={editTab === 'changes'}
+          changesTab={editOutputTab}
+          setChangesTab={setEditOutputTab}
         />
       )}
     </motion.div>
