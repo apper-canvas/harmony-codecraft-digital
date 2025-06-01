@@ -14,11 +14,11 @@ function Home() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <motion.header 
+<motion.header 
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="sticky top-0 z-50 glass-panel mx-4 mt-4 rounded-2xl"
+        className="glass-panel mx-4 mt-4 rounded-2xl"
       >
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
