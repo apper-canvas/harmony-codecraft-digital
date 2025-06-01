@@ -101,24 +101,27 @@ const handleInputProcess = async () => {
                      document.body.classList.contains('dark') ||
                      window.matchMedia('(prefers-color-scheme: dark)').matches
 
-  // Extract text values from input using the provided function
 // Extract text values from input using the provided function
   function extractAllTextValues(input) {
     const lines = input.split('\n');
     let extractedTexts = [];
 
     lines.forEach(line => {
-        if (line.trim()) {
+        if (line.trim().startsWith("data: ")) {
+            const jsonStr = line.trim().slice(6); // Remove "data: " prefix
             try {
-                const parsed = JSON.parse(line);
-                if (parsed && parsed.content) {
-                    extractedTexts.push(parsed.content);
+                const obj = JSON.parse(jsonStr);
+                const content = obj?.choices?.[0]?.delta?.content;
+
+                // Include all string content, even empty or newline
+                if (typeof content === "string") {
+                    extractedTexts.push(content);
                 }
             } catch (e) {
                 console.warn("Skipping malformed JSON line:", line);
             }
         }
-});
+    });
 
     return extractedTexts.join('');
   }
@@ -144,10 +147,10 @@ const handleInputProcess = async () => {
     setIsProcessing(true)
     
     // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500))
+await new Promise(resolve => setTimeout(resolve, 1500))
     
     const extractedText = extractAllTextValues(inputText)
-    setProcessedCode(extractedText || inputText)
+    setProcessedCode(extractedText || "No valid text found")
     setProcessingStats({
       lineCount: (extractedText || inputText).split('\n').length,
       processingTime: 1500,
