@@ -17,6 +17,8 @@ const ErrorTab = ({
   setActiveSubTab
 }) => {
 const errorTab = activeSubTab
+  const [errorInputTab, setErrorInputTab] = useState('request')
+  const [errorOutputTab, setErrorOutputTab] = useState('input')
   
   const handleTabChange = (tab) => {
     setActiveSubTab(tab)
@@ -67,7 +69,7 @@ const errorTab = activeSubTab
         </div>
       </div>
 
-      {/* Tab Content */}
+{/* Tab Content */}
 {errorTab === 'input' && (
 <ErrorInputTab 
           inputText={inputText}
@@ -76,6 +78,8 @@ const errorTab = activeSubTab
           setParsedData={setParsedData}
           clearAll={clearAll}
           isActive={errorTab === 'input'}
+          inputTab={errorInputTab}
+          setInputTab={setErrorInputTab}
         />
       )}
 {errorTab === 'changes' && (
