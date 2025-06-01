@@ -17,12 +17,10 @@ const [editorSettings, setEditorSettings] = useState({
 const [processingStats, setProcessingStats] = useState({
     lineCount: 0,
     processingTime: 0,
-    codeType: 'html'
+codeType: 'html'
   })
-  const [isEditing, setIsEditing] = useState(false)
   const [collapsedBlocks, setCollapsedBlocks] = useState(new Set())
 const codeEditorRef = useRef(null)
-  
   // Helper function to detect language from content
   const getLanguageFromContent = (content) => {
     if (content.includes('<html') || content.includes('<div') || content.includes('<span')) {
@@ -292,15 +290,9 @@ const codeEditorRef = useRef(null)
                 checked={editorSettings.enableFolding}
                 onChange={(e) => setEditorSettings(prev => ({ ...prev, enableFolding: e.target.checked }))}
                 className="rounded border-surface-300"
-              />
+/>
               <span className="text-surface-600 dark:text-surface-300">Code Folding</span>
             </label>
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              className="px-3 py-1 text-sm bg-primary-100 hover:bg-primary-200 dark:bg-primary-800 dark:hover:bg-primary-700 text-primary-700 dark:text-primary-300 rounded-lg transition-colors"
-            >
-              {isEditing ? 'View' : 'Edit'}
-            </button>
             <select
               value={editorSettings.fontSize}
               onChange={(e) => setEditorSettings(prev => ({ ...prev, fontSize: parseInt(e.target.value) }))}
