@@ -31,7 +31,7 @@ setEditorSettings = () => {}
           Actual Response
 </h3>
         <div className="flex items-center space-x-4">
-          <label className="flex items-center space-x-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
+<label className="flex items-center space-x-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
             <input
               type="checkbox"
               checked={editorSettings.showLineNumbers}
@@ -39,11 +39,11 @@ setEditorSettings = () => {}
                 e.stopPropagation();
                 setEditorSettings(prev => ({ ...prev, showLineNumbers: e.target.checked }));
               }}
-              className="w-4 h-4 rounded border-2 border-surface-300 text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer hover:border-primary-400 transition-colors"
+              className="form-checkbox w-4 h-4 rounded border-2 border-surface-300 text-primary-600 focus:ring-primary-500 focus:ring-2 focus:ring-offset-2 cursor-pointer hover:border-primary-400 checked:bg-primary-600 checked:border-primary-600 transition-colors"
             />
             <span className="text-surface-600 dark:text-surface-300 select-none pointer-events-none">Line Numbers</span>
-</label>
-<label className="flex items-center space-x-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
+          </label>
+          <label className="flex items-center space-x-2 text-sm cursor-pointer hover:text-primary-600 transition-colors">
             <input
               type="checkbox"
               checked={editorSettings.enableFolding}

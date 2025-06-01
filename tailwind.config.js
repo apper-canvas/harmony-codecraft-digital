@@ -84,8 +84,8 @@ export default {
           '100%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.6)' }
         }
       }
-    }
+}
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
   darkMode: 'class',
 }
