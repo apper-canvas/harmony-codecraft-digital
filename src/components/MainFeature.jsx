@@ -618,58 +618,9 @@ onPaste={(e) => {
                 </div>
               </div>
             )}
-            {/* Code Output Tab */}
+{/* Code Output Tab */}
             {changesTab === 'output' && (
               <>
-                {/* Processing Stats */}
-                <AnimatePresence>
-                  {processedCode && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="glass-panel p-4 sm:p-6"
-                    >
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-primary-600">
-                            {processingStats.lineCount}
-                          </div>
-                          <div className="text-sm text-surface-600 dark:text-surface-300">
-                            Lines of Code
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-secondary-600">
-                            {processingStats.processingTime}ms
-                          </div>
-                          <div className="text-sm text-surface-600 dark:text-surface-300">
-                            Processing Time
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-accent uppercase">
-                            {processingStats.codeType}
-                          </div>
-                          <div className="text-sm text-surface-600 dark:text-surface-300">
-                            Code Type
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={handleCopyCode}
-                            className="mx-auto p-3 bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 rounded-xl transition-colors duration-300"
-                          >
-                            <ApperIcon name="Copy" className="w-5 h-5 text-surface-600 dark:text-surface-300" />
-                          </motion.button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
                 {/* Code Editor */}
                 <CodeEditor
                   code={processedCode}
