@@ -284,48 +284,56 @@ const [processingStats, setProcessingStats] = useState({
           </div>
         </div>
 
-<div className="neu-input p-0 overflow-hidden bg-surface-50 dark:bg-surface-800">
+<div className="neu-input p-0 overflow-hidden bg-surface-50 dark:bg-surface-800 rounded-xl">
           {processedCode ? (
-            <div className="flex min-h-96">
-              {editorSettings.showLineNumbers && (
-                <div className="line-numbers-editable py-4 min-w-16">
-                  {lineNumbers.map(num => (
-                    <div key={num} className="h-6 flex items-center justify-end pr-2">
-                      {editorSettings.enableFolding && (
-                        <span 
-                          className="fold-indicator"
-                          onClick={() => toggleCodeBlock(num - 1)}
-                        >
-                          {collapsedBlocks.has(num - 1) ? '▶' : '▼'}
-                        </span>
-                      )}
-                      <span className="pr-2">{num}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div 
-                ref={codeEditorRef}
-                className="flex-1 p-4 custom-scrollbar overflow-auto"
-                style={{ fontSize: `${editorSettings.fontSize}px` }}
-              >
-                {isEditing ? (
-                  <textarea
-                    value={processedCode}
-                    onChange={(e) => handleCodeChange(e.target.value)}
-                    className="code-editor-editable w-full min-h-96 text-surface-900 dark:text-surface-100 dark:bg-surface-800"
-                    style={{ fontSize: `${editorSettings.fontSize}px` }}
-                    spellCheck={false}
-                  />
-                ) : (
-                  <pre 
-                    className="whitespace-pre-wrap text-surface-900 dark:text-surface-100 code-editor"
-                    dangerouslySetInnerHTML={{ 
-                      __html: highlightSyntax(processedCode)
-                    }}
-                  />
-                )}
-              </div>
+            <div className="min-h-96">
+              <Editor
+                height="400px"
+                language={getLanguageFromContent(processedCode)}
+                value={processedCode}
+                onChange={(value) => handleCodeChange(value || '')}
+                onMount={handleEditorDidMount}
+                theme={isDarkMode ? 'vs-dark' : 'light'}
+                options={{
+                  fontSize: editorSettings.fontSize,
+                  lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
+                  folding: editorSettings.enableFolding,
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  wordWrap: 'on',
+                  readOnly: false,
+                  selectOnLineNumbers: true,
+                  glyphMargin: false,
+                  lineDecorationsWidth: 0,
+                  lineNumbersMinChars: 3,
+                  renderLineHighlight: 'line',
+                  scrollbar: {
+                    vertical: 'auto',
+                    horizontal: 'auto',
+                    useShadows: false,
+                    verticalScrollbarSize: 8,
+                    horizontalScrollbarSize: 8
+                  },
+                  bracketPairColorization: {
+                    enabled: true
+                  },
+                  guides: {
+                    bracketPairs: true,
+                    indentation: true
+                  }
+                }}
+                loading={
+                  <div className="flex items-center justify-center h-96">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    >
+                      <ApperIcon name="Loader" className="w-8 h-8 text-primary-500" />
+                    </motion.div>
+                  </div>
+                }
+              />
             </div>
           ) : (
             <div className="min-h-96 flex items-center justify-center">
