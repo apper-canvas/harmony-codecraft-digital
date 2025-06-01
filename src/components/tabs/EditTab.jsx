@@ -22,9 +22,18 @@ const EditTab = ({
     return localStorage.getItem('editActiveSubTab') || 'input'
   })
 
-  const handleTabChange = (tab) => {
+const handleTabChange = (tab) => {
     setEditTab(tab)
     localStorage.setItem('editActiveSubTab', tab)
+  }
+
+  const clearAll = () => {
+    setInputText('')
+    setParsedData(null)
+    setCodebaseFiles([])
+    setChangesText('')
+    setProcessedCode('')
+    setActiveFileTab(0)
   }
 
   return (
