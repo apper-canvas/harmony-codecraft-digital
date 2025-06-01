@@ -18,9 +18,16 @@ const ErrorTab = ({
     return localStorage.getItem('errorActiveSubTab') || 'input'
   })
 
-  const handleTabChange = (tab) => {
+const handleTabChange = (tab) => {
     setErrorTab(tab)
     localStorage.setItem('errorActiveSubTab', tab)
+  }
+
+  const clearAll = () => {
+    setInputText('')
+    setParsedData(null)
+    setChangesText('')
+    setProcessedCode('')
   }
 
   return (
