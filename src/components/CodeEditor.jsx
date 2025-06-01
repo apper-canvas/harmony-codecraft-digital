@@ -29,25 +29,25 @@ setEditorSettings = () => {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
           Actual Response
-        </h3>
+</h3>
         <div className="flex items-center space-x-4">
-          <label className="flex items-center space-x-2 text-sm">
+          <label className="flex items-center space-x-2 text-sm cursor-pointer">
             <input
               type="checkbox"
               checked={editorSettings.showLineNumbers}
               onChange={(e) => setEditorSettings(prev => ({ ...prev, showLineNumbers: e.target.checked }))}
-              className="rounded border-surface-300"
+              className="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer"
             />
-            <span className="text-surface-600 dark:text-surface-300">Line Numbers</span>
+            <span className="text-surface-600 dark:text-surface-300 select-none">Line Numbers</span>
           </label>
-          <label className="flex items-center space-x-2 text-sm">
+<label className="flex items-center space-x-2 text-sm cursor-pointer">
             <input
               type="checkbox"
               checked={editorSettings.enableFolding}
               onChange={(e) => setEditorSettings(prev => ({ ...prev, enableFolding: e.target.checked }))}
-              className="rounded border-surface-300"
+              className="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer"
             />
-            <span className="text-surface-600 dark:text-surface-300">Code Folding</span>
+            <span className="text-surface-600 dark:text-surface-300 select-none">Code Folding</span>
           </label>
           <select
             value={editorSettings.fontSize}
