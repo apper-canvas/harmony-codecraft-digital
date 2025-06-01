@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import ApperIcon from '../../ApperIcon'
 import CodeEditor from '../../CodeEditor'
 
-const EditChangesTab = ({ text, setText, processedCode, setProcessedCode, isActive }) => {
+const EditChangesTab = ({ text, setText, processedCode, setProcessedCode, isActive, changesTab, setChangesTab }) => {
 const [isProcessing, setIsProcessing] = useState(false)
   const [processingStats, setProcessingStats] = useState({ lineCount: 0, processingTime: 0, codeType: 'html' })
   const [scrollPosition, setScrollPosition] = useState(0)
