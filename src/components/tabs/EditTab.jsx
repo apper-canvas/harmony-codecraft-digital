@@ -89,6 +89,8 @@ const editTab = activeSubTab
           isActive={editTab === 'input'}
           inputTab={editInputTab}
           setInputTab={setEditInputTab}
+          editorSettings={editorSettings}
+          setEditorSettings={setEditorSettings}
         />
       )}
 {editTab === 'changes' && (
@@ -100,6 +102,8 @@ const editTab = activeSubTab
           isActive={editTab === 'changes'}
           changesTab={editOutputTab}
           setChangesTab={setEditOutputTab}
+          editorSettings={editorSettings}
+          setEditorSettings={setEditorSettings}
         />
       )}
     </motion.div>

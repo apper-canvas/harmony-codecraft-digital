@@ -80,6 +80,8 @@ const errorTab = activeSubTab
           isActive={errorTab === 'input'}
           inputTab={errorInputTab}
           setInputTab={setErrorInputTab}
+          editorSettings={editorSettings}
+          setEditorSettings={setEditorSettings}
         />
       )}
 {errorTab === 'changes' && (
@@ -91,6 +93,8 @@ const errorTab = activeSubTab
           isActive={errorTab === 'changes'}
           changesTab={errorOutputTab}
           setChangesTab={setErrorOutputTab}
+          editorSettings={editorSettings}
+          setEditorSettings={setEditorSettings}
         />
       )}
     </motion.div>

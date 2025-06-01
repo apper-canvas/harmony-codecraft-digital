@@ -99,10 +99,10 @@ const [editorSettings, setEditorSettings] = useState({
               onChange={(value) => onChange && onChange(value || '')}
               onMount={handleEditorDidMount}
               theme={isDarkMode ? 'vs-dark' : 'light'}
-              options={{
-                fontSize: editorSettings.fontSize,
-                lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
-                folding: editorSettings.enableFolding,
+options={{
+                fontSize: fontSize,
+                lineNumbers: showLineNumbers ? 'on' : 'off',
+                folding: enableFolding,
                 minimap: { enabled: false },
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
@@ -127,8 +127,8 @@ const [editorSettings, setEditorSettings] = useState({
                   bracketPairs: true,
                   indentation: true
                 },
-                validate: editorSettings.showErrors,
-                renderValidationDecorations: editorSettings.showErrors ? 'on' : 'off'
+                validate: false,
+                renderValidationDecorations: 'off'
               }}
               loading={
                 <div className="flex items-center justify-center h-96">
