@@ -25,8 +25,11 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
   const [editProcessedCode, setEditProcessedCode] = useState(() => {
     return localStorage.getItem('editProcessedCode') || ''
   })
-  const [editActiveSubTab, setEditActiveSubTab] = useState(() => {
+const [editActiveSubTab, setEditActiveSubTab] = useState(() => {
     return localStorage.getItem('editActiveSubTab') || 'input'
+  })
+  const [editChangesTab, setEditChangesTab] = useState(() => {
+    return localStorage.getItem('editChangesTab') || 'output'
   })
 
 // Persistent state for Error tab
@@ -89,8 +92,12 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
 }, [errorProcessedCode])
 
   useEffect(() => {
-    localStorage.setItem('editActiveSubTab', editActiveSubTab)
+localStorage.setItem('editActiveSubTab', editActiveSubTab)
   }, [editActiveSubTab])
+
+  useEffect(() => {
+    localStorage.setItem('editChangesTab', editChangesTab)
+  }, [editChangesTab])
 
   useEffect(() => {
     localStorage.setItem('errorActiveSubTab', errorActiveSubTab)
@@ -117,6 +124,8 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
           setProcessedCode={setEditProcessedCode}
           activeSubTab={editActiveSubTab}
           setActiveSubTab={setEditActiveSubTab}
+          changesTab={editChangesTab}
+          setChangesTab={setEditChangesTab}
         />
       )}
 

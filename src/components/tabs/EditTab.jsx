@@ -18,7 +18,9 @@ const EditTab = ({
   setChangesText,
   setProcessedCode,
   activeSubTab,
-  setActiveSubTab
+  setActiveSubTab,
+  changesTab,
+  setChangesTab
 }) => {
   const [inputCode, setInputCode] = React.useState('')
   const [outputCode, setOutputCode] = React.useState('')
@@ -132,6 +134,8 @@ useEffect(() => {
 <EditChangesTab
           text={changesText}
           setText={setChangesText}
+          changesTab={changesTab}
+          setChangesTab={setChangesTab}
           options={{
                 fontSize: editorSettings.fontSize,
                 lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
