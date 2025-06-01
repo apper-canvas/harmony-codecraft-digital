@@ -81,16 +81,12 @@ const EditTab = ({
       {editTab === 'changes' && (
         <EditChangesTab 
           text={changesText}
-          setText={setChangesText}
+setText={setChangesText}
           processedCode={processedCode}
           setProcessedCode={setProcessedCode}
         />
       )}
-
-      {/* Changes Sub-Tab Content */}
-      {editSubTab === 'changes' && <EditChangesTab />}
     </motion.div>
   )
 }
-
 export default EditTab
