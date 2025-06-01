@@ -73,9 +73,10 @@ const EditTab = ({
           parsedData={parsedData}
           setParsedData={setParsedData}
           codebaseFiles={codebaseFiles}
-setCodebaseFiles={setCodebaseFiles}
+          setCodebaseFiles={setCodebaseFiles}
           activeFileTab={activeFileTab}
           setActiveFileTab={setActiveFileTab}
+          clearAll={clearAll}
         />
       )}
       {editTab === 'changes' && (
