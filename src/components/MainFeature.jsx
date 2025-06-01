@@ -261,9 +261,9 @@ return (
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mt-8"
-        >
+>
           {/* Input Section Tabs */}
-          <div className="flex space-x-2 mb-6 p-1 bg-white bg-opacity-10 rounded-xl backdrop-blur-sm">
+          <div className="floating-tabs flex space-x-2 mb-6 p-1">
             <button
               onClick={() => setInputTab('request')}
               className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
@@ -465,9 +465,9 @@ return (
 
 {/* Changes Tab Content */}
       {activeTab === 'changes' && (
-        <>
+<>
           {/* Inner Tab Bar for Changes */}
-          <div className="glass-panel p-2">
+          <div className="floating-tabs p-2">
             <div className="flex space-x-2">
               <button
                 onClick={() => setChangesTab('input')}
