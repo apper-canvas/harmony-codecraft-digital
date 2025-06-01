@@ -12,15 +12,14 @@ const ErrorTab = ({
   changesText,
   setChangesText,
   processedCode,
-  setProcessedCode
+  setProcessedCode,
+  activeSubTab,
+  setActiveSubTab
 }) => {
-  const [errorTab, setErrorTab] = useState(() => {
-    return localStorage.getItem('errorActiveSubTab') || 'input'
-  })
-
-const handleTabChange = (tab) => {
-    setErrorTab(tab)
-    localStorage.setItem('errorActiveSubTab', tab)
+const errorTab = activeSubTab
+  
+  const handleTabChange = (tab) => {
+    setActiveSubTab(tab)
   }
 
   const clearAll = () => {
@@ -70,20 +69,22 @@ const handleTabChange = (tab) => {
 
       {/* Tab Content */}
 {errorTab === 'input' && (
-        <ErrorInputTab 
+<ErrorInputTab 
           inputText={inputText}
           setInputText={setInputText}
           parsedData={parsedData}
           setParsedData={setParsedData}
           clearAll={clearAll}
+          isActive={errorTab === 'input'}
         />
       )}
 {errorTab === 'changes' && (
-        <ErrorChangesTab 
+<ErrorChangesTab 
           text={changesText}
           setText={setChangesText}
           processedCode={processedCode}
           setProcessedCode={setProcessedCode}
+          isActive={errorTab === 'changes'}
         />
       )}
     </motion.div>

@@ -25,8 +25,11 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
   const [editProcessedCode, setEditProcessedCode] = useState(() => {
     return localStorage.getItem('editProcessedCode') || ''
   })
+  const [editActiveSubTab, setEditActiveSubTab] = useState(() => {
+    return localStorage.getItem('editActiveSubTab') || 'input'
+  })
 
-  // Persistent state for Error tab
+// Persistent state for Error tab
   const [errorInputText, setErrorInputText] = useState(() => {
     return localStorage.getItem('errorInputText') || ''
   })
@@ -39,6 +42,9 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
   })
   const [errorProcessedCode, setErrorProcessedCode] = useState(() => {
     return localStorage.getItem('errorProcessedCode') || ''
+  })
+  const [errorActiveSubTab, setErrorActiveSubTab] = useState(() => {
+    return localStorage.getItem('errorActiveSubTab') || 'input'
   })
 
   // Save to localStorage whenever state changes
@@ -80,7 +86,15 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
 
   useEffect(() => {
     localStorage.setItem('errorProcessedCode', errorProcessedCode)
-  }, [errorProcessedCode])
+}, [errorProcessedCode])
+
+  useEffect(() => {
+    localStorage.setItem('editActiveSubTab', editActiveSubTab)
+  }, [editActiveSubTab])
+
+  useEffect(() => {
+    localStorage.setItem('errorActiveSubTab', errorActiveSubTab)
+  }, [errorActiveSubTab])
 
   return (
     <div className="space-y-6">
@@ -88,7 +102,7 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
       
       {/* Edit Tab Content */}
       {activeTab === 'edit' && (
-        <EditTab 
+<EditTab 
           inputText={editInputText}
           setInputText={setEditInputText}
           parsedData={editParsedData}
@@ -101,12 +115,14 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
           setChangesText={setEditChangesText}
           processedCode={editProcessedCode}
           setProcessedCode={setEditProcessedCode}
+          activeSubTab={editActiveSubTab}
+          setActiveSubTab={setEditActiveSubTab}
         />
       )}
 
       {/* Error Tab Content */}
       {activeTab === 'error' && (
-        <ErrorTab 
+<ErrorTab 
           inputText={errorInputText}
           setInputText={setErrorInputText}
           parsedData={errorParsedData}
@@ -115,7 +131,9 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
           setChangesText={setErrorChangesText}
           processedCode={errorProcessedCode}
           setProcessedCode={setErrorProcessedCode}
-/>
+          activeSubTab={errorActiveSubTab}
+          setActiveSubTab={setErrorActiveSubTab}
+        />
       )}
     </div>
   )

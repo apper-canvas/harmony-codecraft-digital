@@ -24,15 +24,14 @@ const EditChangesTab = ({ text, setText, processedCode, setProcessedCode, isActi
       saveScroll()
     }
   }, [isActive])
-
-// Restore scroll position when component mounts
+// Restore scroll position when component becomes active
   useEffect(() => {
-    if (changesTabRef.current && scrollPosition > 0) {
+    if (isActive && changesTabRef.current && scrollPosition > 0) {
       setTimeout(() => {
         changesTabRef.current.scrollTop = scrollPosition
       }, 100)
     }
-  }, [scrollPosition])
+  }, [isActive, scrollPosition])
 
   const handleProcessInput = async () => {
     if (!text.trim()) {

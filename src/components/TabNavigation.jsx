@@ -13,7 +13,7 @@ function TabNavigation({ activeTab, setActiveTab, saveScrollPosition }) {
         <div className="flex justify-center space-x-2">
 <button
             onClick={() => {
-              saveScrollPosition(activeTab)
+              if (saveScrollPosition) saveScrollPosition(activeTab)
               setActiveTab('edit')
             }}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
@@ -27,9 +27,9 @@ function TabNavigation({ activeTab, setActiveTab, saveScrollPosition }) {
               <span>Edit</span>
             </div>
           </button>
-          <button
+<button
             onClick={() => {
-              saveScrollPosition(activeTab)
+              if (saveScrollPosition) saveScrollPosition(activeTab)
               setActiveTab('error')
             }}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${

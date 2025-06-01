@@ -16,15 +16,14 @@ const EditTab = ({
   changesText,
   setChangesText,
   processedCode,
-  setProcessedCode
+  setProcessedCode,
+  activeSubTab,
+  setActiveSubTab
 }) => {
-  const [editTab, setEditTab] = useState(() => {
-    return localStorage.getItem('editActiveSubTab') || 'input'
-  })
-
-const handleTabChange = (tab) => {
-    setEditTab(tab)
-    localStorage.setItem('editActiveSubTab', tab)
+const editTab = activeSubTab
+  
+  const handleTabChange = (tab) => {
+    setActiveSubTab(tab)
   }
 
   const clearAll = () => {
@@ -76,7 +75,7 @@ const handleTabChange = (tab) => {
 
       {/* Tab Content */}
 {editTab === 'input' && (
-        <EditInputTab 
+<EditInputTab 
           inputText={inputText}
           setInputText={setInputText}
           parsedData={parsedData}
@@ -86,6 +85,7 @@ const handleTabChange = (tab) => {
           activeFileTab={activeFileTab}
           setActiveFileTab={setActiveFileTab}
           clearAll={clearAll}
+          isActive={editTab === 'input'}
         />
       )}
       {editTab === 'changes' && (
@@ -94,6 +94,7 @@ const handleTabChange = (tab) => {
           setText={setChangesText}
           processedCode={processedCode}
           setProcessedCode={setProcessedCode}
+          isActive={editTab === 'changes'}
         />
       )}
     </motion.div>
