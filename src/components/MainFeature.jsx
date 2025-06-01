@@ -127,7 +127,6 @@ const handleInputProcess = async () => {
   }
 
   // Additional state variables needed
-// Additional state variables needed
   const [processedCode, setProcessedCode] = useState('')
   const [processingStats, setProcessingStats] = useState({ lineCount: 0, processingTime: 0, codeType: 'html' })
   const [editorSettings, setEditorSettings] = useState({ 
@@ -139,24 +138,6 @@ const handleInputProcess = async () => {
   const [collapsedBlocks, setCollapsedBlocks] = useState(new Set())
   const codeEditorRef = useRef(null)
 
-  // Handle paste from clipboard
-  const handlePaste = async () => {
-    try {
-      const clipboardText = await navigator.clipboard.readText()
-      if (clipboardText.trim()) {
-        setInputText(clipboardText)
-        toast.success('Content pasted from clipboard!')
-        // Small delay to ensure state is updated before processing
-        setTimeout(() => {
-          handleInputProcess()
-        }, 100)
-      } else {
-        toast.warning('Clipboard is empty')
-      }
-    } catch (error) {
-      toast.error('Failed to access clipboard. Please check permissions.')
-    }
-  }
 const handleProcessInput = async () => {
     if (!text.trim()) {
       toast.error('Please enter some text to transform')
@@ -316,25 +297,13 @@ return (
                 animate={{ opacity: 1, y: 0 }}
                 className="p-8 glass-panel rounded-2xl"
               >
-<div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-bold text-surface-800">
                     Request Input
                   </h3>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2 text-sm text-surface-600">
-                      <ApperIcon name="Type" className="w-4 h-4" />
-                      <span>Enter your request</span>
-                    </div>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handlePaste}
-                      className="px-4 py-2 bg-surface-100 hover:bg-surface-200 text-surface-700 text-sm font-medium rounded-lg transition-all duration-300 flex items-center space-x-2"
-                      title="Paste from clipboard and process"
-                    >
-                      <ApperIcon name="Clipboard" className="w-4 h-4" />
-                      <span>Paste</span>
-                    </motion.button>
+                  <div className="flex items-center space-x-2 text-sm text-surface-600">
+                    <ApperIcon name="Type" className="w-4 h-4" />
+                    <span>Enter your request</span>
                   </div>
                 </div>
                 
