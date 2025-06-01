@@ -307,13 +307,14 @@ return (
                   </div>
                 </div>
                 
-                <div className="space-y-6">
+<div className="space-y-6">
                   <div>
-<div>
+                    <div>
                       <label className="block text-sm font-medium text-surface-700 mb-3">
                         Request Text
                       </label>
                       <div className="relative">
+                        <textarea
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
                         onPaste={(e) => {
@@ -329,7 +330,8 @@ return (
                       <div className="absolute bottom-4 right-4 text-xs text-surface-500">
                         {inputText.length} characters
                       </div>
-                  
+                    </div>
+                  </div>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
