@@ -6,6 +6,7 @@ import ApperIcon from './ApperIcon'
 
 function MainFeature() {
   const [inputText, setInputText] = useState('')
+  const [activeTab, setActiveTab] = useState('changes')
   const [processedCode, setProcessedCode] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
 const [editorSettings, setEditorSettings] = useState({
@@ -153,15 +154,50 @@ const codeEditorRef = useRef(null)
       .replace(/\/\/(.*?)$/gm, '<span class="syntax-comment">//$1</span>')
   }
 
-  return (
+return (
     <motion.div 
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.3 }}
       className="space-y-8"
     >
-      {/* Input Section */}
-      <div className="glass-panel p-6 sm:p-8">
+      {/* Tab Bar */}
+      <div className="glass-panel p-2">
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setActiveTab('files')}
+            className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+              activeTab === 'files'
+                ? 'bg-primary-500 text-white shadow-glow'
+                : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <ApperIcon name="Files" className="w-4 h-4" />
+              <span>Files</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('changes')}
+            className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+              activeTab === 'changes'
+                ? 'bg-primary-500 text-white shadow-glow'
+                : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <ApperIcon name="GitBranch" className="w-4 h-4" />
+              <span>Changes</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Changes Tab Content */}
+      {activeTab === 'changes' && (
+        <>
+          {/* Input Section */}
+          <div className="glass-panel p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
           <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
             Input Text
@@ -377,8 +413,33 @@ options={{
               </div>
             </div>
           )}
-        </div>
+</div>
       </div>
+        </>
+      )}
+
+      {/* Files Tab Content */}
+      {activeTab === 'files' && (
+        <div className="glass-panel p-6 sm:p-8">
+          <div className="text-center py-12">
+            <motion.div
+              animate={{ rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 4, repeat: Infinity }}
+            >
+              <ApperIcon name="Files" className="w-16 h-16 text-surface-400 mx-auto mb-4" />
+            </motion.div>
+            <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4">
+              File Management
+            </h3>
+            <p className="text-surface-500 dark:text-surface-400 text-lg mb-2">
+              File management functionality coming soon
+            </p>
+            <p className="text-surface-400 dark:text-surface-500 text-sm">
+              Upload, organize, and manage your code files
+            </p>
+          </div>
+        </div>
+      )}
     </motion.div>
   )
 }
