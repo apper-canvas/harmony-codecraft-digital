@@ -12,9 +12,14 @@ const [activeTab, setActiveTab] = useState('input')
   const [parsedData, setParsedData] = useState(null)
   const [text, setText] = useState('')
   const [processedText, setProcessedText] = useState('')
-  const [changesTab, setChangesTab] = useState('input')
+const [changesTab, setChangesTab] = useState('input')
   const [isProcessing, setIsProcessing] = useState(false)
   const [stats, setStats] = useState({ lines: 0, words: 0, characters: 0 })
+  const [inputTabScrollPosition, setInputTabScrollPosition] = useState(0)
+  const [changesTabScrollPosition, setChangesTabScrollPosition] = useState(0)
+  const inputTabRef = useRef(null)
+  const changesTabRef = useRef(null)
+
 const handleInputProcess = async () => {
     setIsProcessing(true)
     
@@ -47,7 +52,25 @@ const handleInputProcess = async () => {
       toast.warning('Please enter some request text to process')
     }
     
-    setIsProcessing(false)
+setIsProcessing(false)
+  }
+
+  // Save scroll position when switching away from a tab
+  const saveScrollPosition = (tabName) => {
+    if (tabName === 'input' && inputTabRef.current) {
+      setInputTabScrollPosition(inputTabRef.current.scrollTop)
+    } else if (tabName === 'changes' && changesTabRef.current) {
+      setChangesTabScrollPosition(changesTabRef.current.scrollTop)
+    }
+  }
+
+  // Restore scroll position when switching to a tab
+  const restoreScrollPosition = (tabName) => {
+    if (tabName === 'input' && inputTabRef.current) {
+      inputTabRef.current.scrollTop = inputTabScrollPosition
+    } else if (tabName === 'changes' && changesTabRef.current) {
+      changesTabRef.current.scrollTop = changesTabScrollPosition
+    }
   }
 
   // Helper function to process fileContent and remove LineNumber prefixes
@@ -123,8 +146,26 @@ const handleInputProcess = async () => {
         }
     });
 
-    return extractedTexts.join('');
+return extractedTexts.join('');
   }
+
+  // Effect to restore scroll position when switching to input tab
+  useEffect(() => {
+    if (activeTab === 'input') {
+      setTimeout(() => {
+        restoreScrollPosition('input')
+      }, 100) // Small delay to ensure DOM is updated
+    }
+  }, [activeTab, inputTabScrollPosition])
+
+  // Effect to restore scroll position when switching to changes tab
+  useEffect(() => {
+    if (activeTab === 'changes') {
+      setTimeout(() => {
+        restoreScrollPosition('changes')
+      }, 100) // Small delay to ensure DOM is updated
+    }
+  }, [activeTab, changesTabScrollPosition])
 
   // Additional state variables needed
   const [processedCode, setProcessedCode] = useState('')
@@ -229,9 +270,12 @@ return (
       >
         {/* Tab Bar */}
         <div className="floating-tabs p-2">
-          <div className="flex space-x-2">
+<div className="flex space-x-2">
             <button
-              onClick={() => setActiveTab('input')}
+              onClick={() => {
+                saveScrollPosition(activeTab)
+                setActiveTab('input')
+              }}
               className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
                 activeTab === 'input'
                   ? 'bg-primary-500 text-white shadow-glow'
@@ -242,9 +286,12 @@ return (
                 <ApperIcon name="Files" className="w-4 h-4" />
                 <span>Input</span>
               </div>
-            </button>
+</button>
             <button
-              onClick={() => setActiveTab('changes')}
+              onClick={() => {
+                saveScrollPosition(activeTab)
+                setActiveTab('changes')
+              }}
               className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
                 activeTab === 'changes'
                   ? 'bg-primary-500 text-white shadow-glow'
@@ -259,12 +306,13 @@ return (
           </div>
         </div>
 
-        {/* Input Tab Content */}
+{/* Input Tab Content */}
         {activeTab === 'input' && (
           <motion.div
+            ref={inputTabRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8"
+            className="mt-8 max-h-screen overflow-y-auto custom-scrollbar"
           >
             {/* Input Section Tabs */}
             <div className="glass-panel flex space-x-2 mb-6 p-2">
@@ -474,9 +522,9 @@ onPaste={(e) => {
           </motion.div>
         )}
 
-        {/* Changes Tab Content */}
+{/* Changes Tab Content */}
         {activeTab === 'changes' && (
-          <>
+          <div ref={changesTabRef} className="max-h-screen overflow-y-auto custom-scrollbar">
             {/* Inner Tab Bar for Changes */}
             <div className="glass-panel p-2 mb-6">
               <div className="flex space-x-2">
@@ -630,8 +678,8 @@ onPaste={(e) => {
                   isDarkMode={isDarkMode}
                 />
               </>
-            )}
-          </>
+)}
+          </div>
         )}
       </motion.div>
     </>
