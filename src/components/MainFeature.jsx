@@ -115,10 +115,9 @@ const MainFeature = ({ activeTab, setActiveTab }) => {
           setChangesText={setErrorChangesText}
           processedCode={errorProcessedCode}
           setProcessedCode={setErrorProcessedCode}
-        />
+/>
       )}
     </div>
-</div>
   )
 }
 
