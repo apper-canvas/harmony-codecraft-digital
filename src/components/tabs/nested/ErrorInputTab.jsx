@@ -132,22 +132,48 @@ const ErrorInputTab = ({ inputText, setInputText, parsedData, setParsedData, cle
           animate={{ opacity: 1, y: 0 }}
           className="p-8 glass-panel rounded-2xl"
 >
-          <div className="flex items-center justify-between mb-6">
+<div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-bold text-surface-800">
               Request Input
             </h3>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                clearAll()
-                toast.success('All Error tab data cleared successfully!')
-              }}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-all duration-300 flex items-center space-x-2"
-            >
-              <ApperIcon name="Trash2" className="w-4 h-4" />
-              <span>Clear</span>
-            </motion.button>
+            <div className="flex items-center space-x-3">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleInputProcess}
+                disabled={isProcessing}
+                className="px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                {isProcessing ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    >
+                      <ApperIcon name="Loader2" className="w-4 h-4" />
+                    </motion.div>
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    <ApperIcon name="Play" className="w-4 h-4" />
+                    <span>Process Request</span>
+                  </>
+                )}
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  clearAll()
+                  toast.success('All Error tab data cleared successfully!')
+                }}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-all duration-300 flex items-center space-x-2"
+              >
+                <ApperIcon name="Trash2" className="w-4 h-4" />
+                <span>Clear</span>
+              </motion.button>
+            </div>
           </div>
           
           <div className="space-y-6">
@@ -160,12 +186,6 @@ const ErrorInputTab = ({ inputText, setInputText, parsedData, setParsedData, cle
                   <textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    onPaste={(e) => {
-                      // Auto-process after paste with small delay to ensure content is set
-                      setTimeout(() => {
-                        handleInputProcess()
-                      }, 1000)
-                    }}
                     placeholder="Enter your request text here..."
                     className="w-full h-64 p-6 bg-white bg-opacity-50 border border-surface-300 rounded-xl resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-surface-800 placeholder-surface-500 backdrop-blur-sm"
                     style={{ fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace' }}
@@ -177,30 +197,6 @@ const ErrorInputTab = ({ inputText, setInputText, parsedData, setParsedData, cle
               </div>
             </div>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleInputProcess}
-            disabled={isProcessing}
-            className="w-full py-4 px-6 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-          >
-            {isProcessing ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                >
-                  <ApperIcon name="Loader2" className="w-5 h-5" />
-                </motion.div>
-                <span>Processing...</span>
-              </>
-            ) : (
-              <>
-                <ApperIcon name="Play" className="w-5 h-5" />
-                <span>Process Request</span>
-              </>
-            )}
-          </motion.button>
         </motion.div>
       ) : (
         <motion.div

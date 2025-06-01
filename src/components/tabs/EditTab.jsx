@@ -42,9 +42,9 @@ const handleTabChange = (tab) => {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      {/* Edit Section Tabs */}
+{/* Edit Section Tabs */}
       <div className="glass-panel p-2">
-        <div className="flex space-x-2">
+        <div className="flex justify-center space-x-2">
           <button
             onClick={() => handleTabChange('input')}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
@@ -68,7 +68,7 @@ const handleTabChange = (tab) => {
           >
             <div className="flex items-center space-x-2">
               <ApperIcon name="GitCommit" className="w-4 h-4" />
-              <span>Changes</span>
+              <span>Output</span>
             </div>
           </button>
         </div>
