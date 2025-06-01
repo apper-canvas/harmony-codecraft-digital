@@ -9,16 +9,15 @@ function CodeEditor({
   onCopy, 
   language, 
   isDarkMode,
-  className = ""
+className = ""
 }) {
   const [editorSettings, setEditorSettings] = useState({ 
-    showLineNumbers: true, 
+    showLineNumbers: false, 
     enableFolding: true, 
     fontSize: 14, 
-    showErrors: true 
+    showErrors: false 
   })
   const codeEditorRef = useRef(null)
-
   // Handle Monaco Editor mount
   const handleEditorDidMount = (editor, monaco) => {
     codeEditorRef.current = editor
