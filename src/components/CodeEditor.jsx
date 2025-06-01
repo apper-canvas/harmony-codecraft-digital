@@ -17,9 +17,8 @@ const [editorSettings, setEditorSettings] = useState({
     fontSize: 14, 
     showErrors: false 
   })
-
-  // Load settings from localStorage on component mount
-  useState(() => {
+// Load settings from localStorage on component mount
+  useEffect(() => {
     try {
       const savedSettings = localStorage.getItem('codeEditorSettings')
       if (savedSettings) {
@@ -30,9 +29,8 @@ const [editorSettings, setEditorSettings] = useState({
       console.warn('Failed to load editor settings from localStorage:', error)
     }
   }, [])
-
-  // Save settings to localStorage whenever they change
-  useState(() => {
+// Save settings to localStorage whenever they change
+  useEffect(() => {
     try {
       localStorage.setItem('codeEditorSettings', JSON.stringify({
         showLineNumbers: editorSettings.showLineNumbers,
@@ -42,7 +40,6 @@ const [editorSettings, setEditorSettings] = useState({
       console.warn('Failed to save editor settings to localStorage:', error)
     }
   }, [editorSettings.showLineNumbers, editorSettings.fontSize])
-
   const codeEditorRef = useRef(null)
   // Handle Monaco Editor mount
   const handleEditorDidMount = (editor, monaco) => {
