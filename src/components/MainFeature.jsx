@@ -7,6 +7,7 @@ import ApperIcon from './ApperIcon'
 function MainFeature() {
   const [inputText, setInputText] = useState('')
   const [activeTab, setActiveTab] = useState('changes')
+  const [changesTab, setChangesTab] = useState('input')
   const [processedCode, setProcessedCode] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
 const [editorSettings, setEditorSettings] = useState({
@@ -193,11 +194,44 @@ return (
         </div>
       </div>
 
-      {/* Changes Tab Content */}
+{/* Changes Tab Content */}
       {activeTab === 'changes' && (
         <>
-          {/* Input Section */}
-          <div className="glass-panel p-6 sm:p-8">
+          {/* Inner Tab Bar for Changes */}
+          <div className="glass-panel p-2">
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setChangesTab('input')}
+                className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                  changesTab === 'input'
+                    ? 'bg-primary-500 text-white shadow-glow'
+                    : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <ApperIcon name="FileText" className="w-4 h-4" />
+                  <span>Input Text</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setChangesTab('output')}
+                className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                  changesTab === 'output'
+                    ? 'bg-primary-500 text-white shadow-glow'
+                    : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <ApperIcon name="Code2" className="w-4 h-4" />
+                  <span>Code Output</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Input Text Tab */}
+          {changesTab === 'input' && (
+            <div className="glass-panel p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
           <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
             Input Text
@@ -249,16 +283,19 @@ return (
                   <ApperIcon name="Play" className="w-5 h-5" />
                   <span>Transform to Code</span>
                 </>
+</>
               )}
             </div>
           </motion.button>
         </div>
-      </div>
-
-      {/* Processing Stats */}
-      <AnimatePresence>
-        {processedCode && (
-          <motion.div
+            </div>
+          )}
+          {/* Code Output Tab */}
+          {changesTab === 'output' && (
+            <>
+              {/* Processing Stats */}
+              <AnimatePresence>
+                {processedCode && (
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -301,13 +338,13 @@ return (
               </div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+)}
+              </AnimatePresence>
 
-      {/* Code Editor */}
-      <div className="glass-panel p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
+              {/* Code Editor */}
+              <div className="glass-panel p-6 sm:p-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-4 sm:mb-0">
             Code Output
           </h3>
 <div className="flex items-center space-x-4">
@@ -412,9 +449,11 @@ options={{
                 </p>
               </div>
             </div>
-          )}
+)}
 </div>
-      </div>
+              </div>
+            </>
+          )}
         </>
       )}
 
