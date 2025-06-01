@@ -96,13 +96,13 @@ const [editorSettings, setEditorSettings] = useState({
               height="400px"
               language={language}
               value={code}
-              onChange={(value) => onChange && onChange(value || '')}
+onChange={(value) => onChange && onChange(value || '')}
               onMount={handleEditorDidMount}
               theme={isDarkMode ? 'vs-dark' : 'light'}
-options={{
-                fontSize: fontSize,
-                lineNumbers: showLineNumbers ? 'on' : 'off',
-                folding: enableFolding,
+              options={{
+                fontSize: editorSettings.fontSize,
+                lineNumbers: editorSettings.showLineNumbers ? 'on' : 'off',
+                folding: editorSettings.enableFolding,
                 minimap: { enabled: false },
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
