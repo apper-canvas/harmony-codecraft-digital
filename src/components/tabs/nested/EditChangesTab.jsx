@@ -61,8 +61,9 @@ const [isProcessing, setIsProcessing] = useState(false)
     }
   }
 
-  // Get language from content
+// Get language from content
   const getLanguageFromContent = (content) => {
+    if (!content || typeof content !== 'string') return 'plaintext'
     if (content.includes('<html') || content.includes('<!DOCTYPE')) return 'html'
     if (content.includes('function') || content.includes('const ') || content.includes('let ')) return 'javascript'
     if (content.includes('def ') || content.includes('import ')) return 'python'
