@@ -327,11 +327,12 @@ return (
                         className="w-full h-64 p-6 bg-white bg-opacity-50 border border-surface-300 rounded-xl resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-surface-800 placeholder-surface-500 backdrop-blur-sm"
                         style={{ fontFamily: 'JetBrains Mono, Monaco, Consolas, monospace' }}
                       />
-                      <div className="absolute bottom-4 right-4 text-xs text-surface-500">
+<div className="absolute bottom-4 right-4 text-xs text-surface-500">
                         {inputText.length} characters
                       </div>
                     </div>
                   </div>
+                </div>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
