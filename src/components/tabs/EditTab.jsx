@@ -4,8 +4,9 @@ import { toast } from 'react-toastify'
 import ApperIcon from '../ApperIcon'
 import CodeEditor from '../CodeEditor'
 import EditInputTab from './nested/EditInputTab'
+import EditChangesTab from './nested/EditChangesTab'
 const EditTab = ({ 
-  inputText, 
+  inputText,
   setInputText, 
   parsedData,
   setParsedData,
@@ -44,7 +45,7 @@ const EditTab = ({
   }, [])
 
   // Save settings to localStorage whenever they change
-  useEffect(() => {
+useEffect(() => {
     try {
       localStorage.setItem('editTabEditorSettings', JSON.stringify({
         showLineNumbers: editorSettings.showLineNumbers,
@@ -54,10 +55,8 @@ const EditTab = ({
       console.warn('Failed to save editor settings to localStorage:', error)
     }
   }, [editorSettings.showLineNumbers, editorSettings.fontSize])
-}, [editorSettings.showLineNumbers, editorSettings.fontSize])
   
   // Handle file input
-  const [editOutputTab, setEditOutputTab] = useState('input')
   const [editInputTab, setEditInputTab] = useState('request')
   
   const handleTabChange = (tab) => {
@@ -81,10 +80,10 @@ const EditTab = ({
 {/* Edit Section Tabs */}
       <div className="glass-panel p-2">
         <div className="flex justify-center space-x-2">
-          <button
+<button
             onClick={() => handleTabChange('input')}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-              editTab === 'input'
+              activeSubTab === 'input'
                 ? 'bg-primary-500 text-white shadow-glow'
                 : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
             }`}
@@ -94,10 +93,10 @@ const EditTab = ({
               <span>Input</span>
             </div>
           </button>
-          <button
+<button
             onClick={() => handleTabChange('changes')}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-              editTab === 'changes'
+              activeSubTab === 'changes'
                 ? 'bg-primary-500 text-white shadow-glow'
                 : 'bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300'
             }`}
@@ -111,7 +110,7 @@ const EditTab = ({
       </div>
 
 {/* Tab Content */}
-{editTab === 'input' && (
+{activeSubTab === 'input' && (
 <EditInputTab 
           inputText={inputText}
           setInputText={setInputText}
@@ -122,15 +121,15 @@ const EditTab = ({
           activeFileTab={activeFileTab}
           setActiveFileTab={setActiveFileTab}
           clearAll={clearAll}
-          isActive={editTab === 'input'}
+          isActive={activeSubTab === 'input'}
           inputTab={editInputTab}
           setInputTab={setEditInputTab}
           editorSettings={editorSettings}
           setEditorSettings={setEditorSettings}
         />
       )}
-{editTab === 'changes' && (
-<EditChangesTab 
+{activeSubTab === 'changes' && (
+<EditChangesTab
           text={changesText}
           setText={setChangesText}
           options={{
