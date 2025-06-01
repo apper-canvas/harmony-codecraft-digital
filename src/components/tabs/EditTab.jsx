@@ -22,24 +22,34 @@ const EditTab = ({
   changesTab,
   setChangesTab
 }) => {
-  const [inputCode, setInputCode] = React.useState('')
+const [inputCode, setInputCode] = React.useState('')
   const [outputCode, setOutputCode] = React.useState('')
   const [isLoading, setIsLoading] = React.useState(false)
   const [isDarkMode, setIsDarkMode] = React.useState(false)
-  const [editorSettings, setEditorSettings] = useState({ 
-    showLineNumbers: false, 
+  const [inputEditorSettings, setInputEditorSettings] = useState({ 
+    showLineNumbers: true, 
     enableFolding: true, 
-    fontSize: 14, 
-    showErrors: false 
+    fontSize: 14 
+  })
+  const [outputEditorSettings, setOutputEditorSettings] = useState({ 
+    showLineNumbers: true, 
+    enableFolding: true, 
+    fontSize: 14 
   })
 
   // Load settings from localStorage on component mount
   useEffect(() => {
     try {
-      const savedSettings = localStorage.getItem('editTabEditorSettings')
-      if (savedSettings) {
-        const parsed = JSON.parse(savedSettings)
-        setEditorSettings(prev => ({ ...prev, ...parsed }))
+      const savedInputSettings = localStorage.getItem('editTabInputEditorSettings')
+      if (savedInputSettings) {
+        const parsed = JSON.parse(savedInputSettings)
+        setInputEditorSettings(prev => ({ ...prev, ...parsed }))
+      }
+      
+      const savedOutputSettings = localStorage.getItem('editTabOutputEditorSettings')
+      if (savedOutputSettings) {
+        const parsed = JSON.parse(savedOutputSettings)
+        setOutputEditorSettings(prev => ({ ...prev, ...parsed }))
       }
     } catch (error) {
       console.warn('Failed to load editor settings from localStorage:', error)
@@ -47,16 +57,29 @@ const EditTab = ({
   }, [])
 
   // Save settings to localStorage whenever they change
-useEffect(() => {
+  useEffect(() => {
     try {
-      localStorage.setItem('editTabEditorSettings', JSON.stringify({
-        showLineNumbers: editorSettings.showLineNumbers,
-        fontSize: editorSettings.fontSize
+      localStorage.setItem('editTabInputEditorSettings', JSON.stringify({
+        showLineNumbers: inputEditorSettings.showLineNumbers,
+        fontSize: inputEditorSettings.fontSize,
+        enableFolding: inputEditorSettings.enableFolding
       }))
     } catch (error) {
-      console.warn('Failed to save editor settings to localStorage:', error)
+      console.warn('Failed to save input editor settings to localStorage:', error)
     }
-  }, [editorSettings.showLineNumbers, editorSettings.fontSize])
+  }, [inputEditorSettings.showLineNumbers, inputEditorSettings.fontSize, inputEditorSettings.enableFolding])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('editTabOutputEditorSettings', JSON.stringify({
+        showLineNumbers: outputEditorSettings.showLineNumbers,
+        fontSize: outputEditorSettings.fontSize,
+        enableFolding: outputEditorSettings.enableFolding
+      }))
+    } catch (error) {
+      console.warn('Failed to save output editor settings to localStorage:', error)
+    }
+  }, [outputEditorSettings.showLineNumbers, outputEditorSettings.fontSize, outputEditorSettings.enableFolding])
   
   // Handle file input
   const [editInputTab, setEditInputTab] = useState('request')
@@ -122,11 +145,11 @@ useEffect(() => {
           setCodebaseFiles={setCodebaseFiles}
           activeFileTab={activeFileTab}
           setActiveFileTab={setActiveFileTab}
-          clearAll={clearAll}
+clearAll={clearAll}
           isActive={activeSubTab === 'input'}
           inputTab={editInputTab}
           setInputTab={setEditInputTab}
-editorSettings={inputEditorSettings}
+          editorSettings={inputEditorSettings}
           setEditorSettings={setInputEditorSettings}
         />
       )}
@@ -134,19 +157,10 @@ editorSettings={inputEditorSettings}
 <EditChangesTab
           text={changesText}
           setText={setChangesText}
-          changesTab={changesTab}
+changesTab={changesTab}
           setChangesTab={setChangesTab}
           editorSettings={outputEditorSettings}
           setEditorSettings={setOutputEditorSettings}
-          options={{
-                fontSize: outputEditorSettings.fontSize,
-                lineNumbers: outputEditorSettings.showLineNumbers ? 'on' : 'off',
-                folding: outputEditorSettings.enableFolding,
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
-wordWrap: 'on',
-              }}
         />
       )}
     </motion.div>
