@@ -45,12 +45,12 @@ await new Promise(resolve => setTimeout(resolve, 1500))
     
     const extractedText = extractAllTextValues(text)
     
-    if (typeof setProcessedCode === 'function') {
+   // if (typeof setProcessedCode === 'function') {
       setProcessedCode(extractedText || "No valid text found")
-    } else {
+    /*} else {
       toast.error('Error: setProcessedCode function not available')
       console.error('setProcessedCode is not a function:', typeof setProcessedCode)
-    }
+    }*/
     
     setProcessingStats({
       lineCount: (extractedText || text).split('\n').length,
