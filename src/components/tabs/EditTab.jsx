@@ -154,10 +154,11 @@ clearAll={clearAll}
         />
       )}
 {activeSubTab === 'changes' && (
-<EditChangesTab
+        <EditChangesTab
           text={changesText}
           setText={setChangesText}
-changesTab={changesTab}
+          setProcessedCode={setProcessedCode}
+          changesTab={changesTab}
           setChangesTab={setChangesTab}
           editorSettings={outputEditorSettings}
           setEditorSettings={setOutputEditorSettings}
