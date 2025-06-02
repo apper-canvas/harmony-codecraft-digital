@@ -41,18 +41,28 @@ const [isProcessing, setIsProcessing] = useState(false)
     setIsProcessing(true)
     
     // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500))
+await new Promise(resolve => setTimeout(resolve, 1500))
     
     const extractedText = extractAllTextValues(text)
-    setProcessedCode(extractedText || "No valid text found")
+    
+    if (typeof setProcessedCode === 'function') {
+      setProcessedCode(extractedText || "No valid text found")
+    } else {
+      toast.error('Error: setProcessedCode function not available')
+      console.error('setProcessedCode is not a function:', typeof setProcessedCode)
+    }
+    
     setProcessingStats({
       lineCount: (extractedText || text).split('\n').length,
       processingTime: 1500,
-      codeType: getLanguageFromContent(extractedText || text)
+codeType: getLanguageFromContent(extractedText || text)
     })
     
     setIsProcessing(false)
-    setChangesTab('output')
+    
+    if (typeof setChangesTab === 'function') {
+      setChangesTab('output')
+    }
     
     if (extractedText) {
       toast.success('Successfully extracted text content!')
@@ -82,9 +92,14 @@ const [isProcessing, setIsProcessing] = useState(false)
     setProcessingStats({ lineCount: 0, processingTime: 0, codeType: 'html' })
     toast.info('Workspace cleared')
   }
-
-  const handleCodeChange = (newCode) => {
-    setProcessedCode(newCode)
+const handleCodeChange = (newCode) => {
+    if (typeof setProcessedCode === 'function') {
+      setProcessedCode(newCode)
+    } else {
+      toast.error('Error: setProcessedCode function not available')
+      console.error('setProcessedCode is not a function:', typeof setProcessedCode)
+    }
+    
     setProcessingStats(prev => ({
       ...prev,
       lineCount: newCode.split('\n').length
