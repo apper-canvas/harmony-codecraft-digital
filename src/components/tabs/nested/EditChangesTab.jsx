@@ -105,7 +105,7 @@ const handleCodeChange = (newCode) => {
       lineCount: newCode.split('\n').length
     }))
   }
-// Extract text values from input using enhanced extraction logic
+// Extract text values from input using enhanced extraction logic for Claude API SSE format
   function extractAllTextValues(input) {
     if (!input || typeof input !== 'string') {
       return '';
@@ -118,7 +118,7 @@ const handleCodeChange = (newCode) => {
     lines.forEach(line => {
         const trimmedLine = line.trim();
         
-        // Handle streaming JSON format: data: {"choices":[{"delta":{"content":"..."}}]}
+        // Handle Claude API streaming JSON format: data: {"event":"content_delta","choices":[{"delta":{"content":"..."}}]}
         if (trimmedLine.startsWith("data: ")) {
             const jsonStr = trimmedLine.slice(6); // Remove "data: " prefix
             
@@ -129,17 +129,29 @@ const handleCodeChange = (newCode) => {
             
             try {
                 const obj = JSON.parse(jsonStr);
-                // Access content from the correct nested path: choices[0].delta.content
-                const content = obj?.choices?.[0]?.delta?.content;
+                
+                // Only process content_delta events, skip finish_reason events
+                if (obj?.event === 'content_delta') {
+                    // Access content from the correct nested path: choices[0].delta.content
+                    const content = obj?.choices?.[0]?.delta?.content;
 
-                // Include all string content, including empty strings and whitespace
-                // Empty strings are part of the streaming protocol and should be preserved
-                if (typeof content === "string") {
-                    extractedTexts.push(content);
-                    totalContentLength += content.length;
+                    // Include all string content, including empty strings and whitespace
+                    // Empty strings are part of the streaming protocol and should be preserved
+                    if (typeof content === "string") {
+                        extractedTexts.push(content);
+                        totalContentLength += content.length;
+                    }
+                }
+                // For backward compatibility, also handle objects without event field
+                else if (!obj?.event && obj?.choices?.[0]?.delta?.content !== undefined) {
+                    const content = obj.choices[0].delta.content;
+                    if (typeof content === "string") {
+                        extractedTexts.push(content);
+                        totalContentLength += content.length;
+                    }
                 }
             } catch (e) {
-                console.warn("Skipping malformed JSON line:", trimmedLine, "Error:", e.message);
+                console.warn("Skipping malformed JSON line:", trimmedLine.substring(0, 100) + "...", "Error:", e.message);
             }
         }
         // Handle other potential formats
@@ -153,6 +165,9 @@ const handleCodeChange = (newCode) => {
     });
 
     const result = extractedTexts.join('');
+    
+    // Log extraction stats for debugging
+    console.log(`Extracted ${extractedTexts.length} content chunks, total length: ${totalContentLength}`);
     
     // Return the joined content if we found any data, even if it's just empty strings
     // This preserves the streaming behavior where content builds up over time
