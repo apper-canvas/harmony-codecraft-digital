@@ -7,10 +7,10 @@ function CodeEditor({
   code, 
   onChange, 
   onCopy, 
-  language, 
+language, 
   isDarkMode,
   className = "",
-editorSettings = { showLineNumbers: false, enableFolding: true, fontSize: 14, showErrors: false },
+editorSettings = { showLineNumbers: true, enableFolding: true, fontSize: 14, showErrors: false },
 setEditorSettings = () => {}
 }) {
   const codeEditorRef = useRef(null)

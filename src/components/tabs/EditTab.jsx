@@ -24,7 +24,7 @@ const EditTab = ({
 }) => {
 const [inputCode, setInputCode] = React.useState('')
   const [outputCode, setOutputCode] = React.useState('')
-  const [isLoading, setIsLoading] = React.useState(false)
+const [isLoading, setIsLoading] = React.useState(false)
   const [isDarkMode, setIsDarkMode] = React.useState(false)
   const [inputEditorSettings, setInputEditorSettings] = useState({ 
     showLineNumbers: true, 
