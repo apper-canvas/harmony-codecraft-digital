@@ -118,7 +118,7 @@ const handleCodeChange = (newCode) => {
     lines.forEach(line => {
         const trimmedLine = line.trim();
         
-        // Handle different streaming formats
+        // Handle streaming JSON format: data: {"choices":[{"delta":{"content":"..."}}]}
         if (trimmedLine.startsWith("data: ")) {
             const jsonStr = trimmedLine.slice(6); // Remove "data: " prefix
             
@@ -129,15 +129,17 @@ const handleCodeChange = (newCode) => {
             
             try {
                 const obj = JSON.parse(jsonStr);
+                // Access content from the correct nested path: choices[0].delta.content
                 const content = obj?.choices?.[0]?.delta?.content;
 
                 // Include all string content, including empty strings and whitespace
+                // Empty strings are part of the streaming protocol and should be preserved
                 if (typeof content === "string") {
                     extractedTexts.push(content);
                     totalContentLength += content.length;
                 }
             } catch (e) {
-                console.warn("Skipping malformed JSON line:", line);
+                console.warn("Skipping malformed JSON line:", trimmedLine, "Error:", e.message);
             }
         }
         // Handle other potential formats
@@ -152,13 +154,14 @@ const handleCodeChange = (newCode) => {
 
     const result = extractedTexts.join('');
     
-    // Ensure we have meaningful content
-    if (totalContentLength === 0 && extractedTexts.length === 0) {
-        return '';
+    // Return the joined content if we found any data, even if it's just empty strings
+    // This preserves the streaming behavior where content builds up over time
+    if (extractedTexts.length > 0) {
+        return result;
     }
 
-    // Return the joined content, preserving all characters including newlines
-    return result;
+    // Return empty string if no valid streaming data was found
+    return '';
   }
   // Check if dark mode is enabled
   const isDarkMode = document.documentElement.classList.contains('dark') || 
