@@ -105,32 +105,61 @@ const handleCodeChange = (newCode) => {
       lineCount: newCode.split('\n').length
     }))
   }
-
-  // Extract text values from input using the provided function
+// Extract text values from input using enhanced extraction logic
   function extractAllTextValues(input) {
+    if (!input || typeof input !== 'string') {
+      return '';
+    }
+
     const lines = input.split('\n');
     let extractedTexts = [];
+    let totalContentLength = 0;
 
     lines.forEach(line => {
-        if (line.trim().startsWith("data: ")) {
-            const jsonStr = line.trim().slice(6); // Remove "data: " prefix
+        const trimmedLine = line.trim();
+        
+        // Handle different streaming formats
+        if (trimmedLine.startsWith("data: ")) {
+            const jsonStr = trimmedLine.slice(6); // Remove "data: " prefix
+            
+            // Skip empty data lines and special markers
+            if (jsonStr === '' || jsonStr === '[DONE]') {
+                return;
+            }
+            
             try {
                 const obj = JSON.parse(jsonStr);
                 const content = obj?.choices?.[0]?.delta?.content;
 
-                // Include all string content, even empty or newline
+                // Include all string content, including empty strings and whitespace
                 if (typeof content === "string") {
                     extractedTexts.push(content);
+                    totalContentLength += content.length;
                 }
             } catch (e) {
                 console.warn("Skipping malformed JSON line:", line);
             }
         }
+        // Handle other potential formats
+        else if (trimmedLine.startsWith("content:") || trimmedLine.startsWith("text:")) {
+            const content = trimmedLine.split(':', 2)[1]?.trim();
+            if (content) {
+                extractedTexts.push(content);
+                totalContentLength += content.length;
+            }
+        }
     });
 
-    return extractedTexts.join('');
-  }
+    const result = extractedTexts.join('');
+    
+    // Ensure we have meaningful content
+    if (totalContentLength === 0 && extractedTexts.length === 0) {
+        return '';
+    }
 
+    // Return the joined content, preserving all characters including newlines
+    return result;
+  }
   // Check if dark mode is enabled
   const isDarkMode = document.documentElement.classList.contains('dark') || 
                      document.body.classList.contains('dark') ||
